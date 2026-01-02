@@ -69,11 +69,16 @@ jobs:
         run: |
           echo "DATABASE_URL=postgresql://localhost:5432/dummy" >> "$GITHUB_ENV"
           echo "NEXTAUTH_URL=http://localhost:3000" >> "$GITHUB_ENV"
-          echo "NEXTAUTH_SECRET=$(node -e \"process.stdout.write('x'.repeat(32))\")" >> "$GITHUB_ENV"
           echo "RESEND_API_KEY=re_build_time_key" >> "$GITHUB_ENV"
           echo "EMAIL_DOMAIN=build.example.com" >> "$GITHUB_ENV"
-          echo "CRON_SECRET=$(node -e \"process.stdout.write('x'.repeat(16))\")" >> "$GITHUB_ENV"
           echo "NEXT_TELEMETRY_DISABLED=1" >> "$GITHUB_ENV"
+          # Generate deterministic placeholder secrets (to satisfy zod min-length) without tricky quoting
+          printf "NEXTAUTH_SECRET=" >> "$GITHUB_ENV"
+          head -c 32 < /dev/zero | tr '\0' 'x' >> "$GITHUB_ENV"
+          printf "\n" >> "$GITHUB_ENV"
+          printf "CRON_SECRET=" >> "$GITHUB_ENV"
+          head -c 16 < /dev/zero | tr '\0' 'x' >> "$GITHUB_ENV"
+          printf "\n" >> "$GITHUB_ENV"
 
       - name: Generate Prisma Client
         run: npx prisma generate
