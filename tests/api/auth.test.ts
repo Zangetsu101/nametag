@@ -10,6 +10,7 @@ const mocks = vi.hoisted(() => ({
   checkRateLimitSync: vi.fn(),  // For rate-limit (sync)
   bcryptHash: vi.fn(),
   bcryptCompare: vi.fn(),
+  isFeatureEnabled: vi.fn(),
 }));
 
 // Mock Prisma
@@ -89,6 +90,12 @@ vi.mock('../../lib/relationship-types', () => ({
   createPreloadedRelationshipTypes: vi.fn(() => Promise.resolve()),
 }));
 
+// Mock features
+vi.mock('../../lib/features', () => ({
+  isFeatureEnabled: mocks.isFeatureEnabled,
+  isSaasMode: vi.fn(() => mocks.isFeatureEnabled('emailVerification')),
+}));
+
 // Import after mocking
 import { POST as register } from '../../app/api/auth/register/route';
 import { POST as forgotPassword } from '../../app/api/auth/forgot-password/route';
@@ -102,6 +109,8 @@ describe('Auth API', () => {
     mocks.checkRateLimitSync.mockReturnValue(null);
     mocks.sendEmail.mockResolvedValue({ success: true });
     mocks.bcryptHash.mockResolvedValue('hashed-password');
+    // Default to SaaS mode (email verification enabled) for backwards compatibility
+    mocks.isFeatureEnabled.mockReturnValue(true);
   });
 
   describe('POST /api/auth/register', () => {
@@ -266,6 +275,195 @@ describe('Auth API', () => {
 
       expect(response.status).toBe(429);
       expect(mocks.userCreate).not.toHaveBeenCalled();
+    });
+
+    describe('Self-Hosted Mode (email verification disabled)', () => {
+      beforeEach(() => {
+        // Disable email verification for self-hosted mode
+        mocks.isFeatureEnabled.mockReturnValue(false);
+      });
+
+      it('should auto-verify users in self-hosted mode', async () => {
+        const newUser = {
+          id: 'user-123',
+          email: 'test@example.com',
+          name: 'Test User',
+          emailVerified: true,
+        };
+
+        mocks.userFindUnique.mockResolvedValue(null);
+        mocks.userCreate.mockResolvedValue(newUser);
+
+        const request = new Request('http://localhost/api/auth/register', {
+          method: 'POST',
+          body: JSON.stringify({
+            email: 'test@example.com',
+            password: 'ValidPassword123!',
+            name: 'Test User',
+          }),
+          headers: { 'content-type': 'application/json' },
+        });
+
+        const response = await register(request);
+        const body = await response.json();
+
+        expect(response.status).toBe(201);
+        expect(body.message).toContain('can now log in');
+        expect(body.message).not.toContain('verify');
+        expect(mocks.userCreate).toHaveBeenCalledWith(
+          expect.objectContaining({
+            data: expect.objectContaining({
+              emailVerified: true,
+              emailVerifyToken: null,
+            }),
+          })
+        );
+      });
+
+      it('should not send verification email in self-hosted mode', async () => {
+        mocks.userFindUnique.mockResolvedValue(null);
+        mocks.userCreate.mockResolvedValue({
+          id: 'user-123',
+          email: 'test@example.com',
+          name: 'Test User',
+        });
+
+        const request = new Request('http://localhost/api/auth/register', {
+          method: 'POST',
+          body: JSON.stringify({
+            email: 'test@example.com',
+            password: 'ValidPassword123!',
+            name: 'Test User',
+          }),
+          headers: { 'content-type': 'application/json' },
+        });
+
+        await register(request);
+
+        expect(mocks.sendEmail).not.toHaveBeenCalled();
+      });
+
+      it('should not generate verification token in self-hosted mode', async () => {
+        mocks.userFindUnique.mockResolvedValue(null);
+        mocks.userCreate.mockResolvedValue({
+          id: 'user-123',
+          email: 'test@example.com',
+          name: 'Test User',
+        });
+
+        const request = new Request('http://localhost/api/auth/register', {
+          method: 'POST',
+          body: JSON.stringify({
+            email: 'test@example.com',
+            password: 'ValidPassword123!',
+            name: 'Test User',
+          }),
+          headers: { 'content-type': 'application/json' },
+        });
+
+        await register(request);
+
+        expect(mocks.userCreate).toHaveBeenCalledWith(
+          expect.objectContaining({
+            data: expect.objectContaining({
+              emailVerifyToken: null,
+              emailVerifyExpires: null,
+            }),
+          })
+        );
+      });
+    });
+
+    describe('SaaS Mode (email verification enabled)', () => {
+      beforeEach(() => {
+        // Enable email verification for SaaS mode
+        mocks.isFeatureEnabled.mockReturnValue(true);
+      });
+
+      it('should require email verification in SaaS mode', async () => {
+        mocks.userFindUnique.mockResolvedValue(null);
+        mocks.userCreate.mockResolvedValue({
+          id: 'user-123',
+          email: 'test@example.com',
+          name: 'Test User',
+        });
+
+        const request = new Request('http://localhost/api/auth/register', {
+          method: 'POST',
+          body: JSON.stringify({
+            email: 'test@example.com',
+            password: 'ValidPassword123!',
+            name: 'Test User',
+          }),
+          headers: { 'content-type': 'application/json' },
+        });
+
+        const response = await register(request);
+        const body = await response.json();
+
+        expect(response.status).toBe(201);
+        expect(body.message).toContain('verify');
+        expect(mocks.userCreate).toHaveBeenCalledWith(
+          expect.objectContaining({
+            data: expect.objectContaining({
+              emailVerified: false,
+            }),
+          })
+        );
+      });
+
+      it('should send verification email in SaaS mode', async () => {
+        mocks.userFindUnique.mockResolvedValue(null);
+        mocks.userCreate.mockResolvedValue({
+          id: 'user-123',
+          email: 'test@example.com',
+          name: 'Test User',
+        });
+
+        const request = new Request('http://localhost/api/auth/register', {
+          method: 'POST',
+          body: JSON.stringify({
+            email: 'test@example.com',
+            password: 'ValidPassword123!',
+            name: 'Test User',
+          }),
+          headers: { 'content-type': 'application/json' },
+        });
+
+        await register(request);
+
+        expect(mocks.sendEmail).toHaveBeenCalled();
+      });
+
+      it('should generate verification token in SaaS mode', async () => {
+        mocks.userFindUnique.mockResolvedValue(null);
+        mocks.userCreate.mockResolvedValue({
+          id: 'user-123',
+          email: 'test@example.com',
+          name: 'Test User',
+        });
+
+        const request = new Request('http://localhost/api/auth/register', {
+          method: 'POST',
+          body: JSON.stringify({
+            email: 'test@example.com',
+            password: 'ValidPassword123!',
+            name: 'Test User',
+          }),
+          headers: { 'content-type': 'application/json' },
+        });
+
+        await register(request);
+
+        expect(mocks.userCreate).toHaveBeenCalledWith(
+          expect.objectContaining({
+            data: expect.objectContaining({
+              emailVerifyToken: expect.any(String),
+              emailVerifyExpires: expect.any(Date),
+            }),
+          })
+        );
+      });
     });
   });
 

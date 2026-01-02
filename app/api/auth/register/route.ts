@@ -9,6 +9,7 @@ import { handleApiError, parseRequestBody } from '@/lib/api-utils';
 import { logger } from '@/lib/logger';
 import { createFreeSubscription } from '@/lib/billing';
 import { createPreloadedRelationshipTypes } from '@/lib/relationship-types';
+import { isFeatureEnabled } from '@/lib/features';
 
 const TOKEN_EXPIRY_HOURS = 24;
 
@@ -48,11 +49,16 @@ export async function POST(request: Request) {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Generate verification token
-    const verifyToken = generateVerificationToken();
-    const verifyExpires = new Date(Date.now() + TOKEN_EXPIRY_HOURS * 60 * 60 * 1000);
+    // Check if email verification is enabled (SaaS mode only)
+    const requireEmailVerification = isFeatureEnabled('emailVerification');
 
-    // Create user with verification token
+    // Generate verification token only if verification is required
+    const verifyToken = requireEmailVerification ? generateVerificationToken() : null;
+    const verifyExpires = requireEmailVerification
+      ? new Date(Date.now() + TOKEN_EXPIRY_HOURS * 60 * 60 * 1000)
+      : null;
+
+    // Create user - auto-verify in self-hosted mode
     const user = await prisma.user.create({
       data: {
         email,
@@ -60,10 +66,10 @@ export async function POST(request: Request) {
         name,
         surname: surname || null,
         nickname: nickname || null,
-        emailVerified: false,
+        emailVerified: !requireEmailVerification, // Auto-verify in self-hosted mode
         emailVerifyToken: verifyToken,
         emailVerifyExpires: verifyExpires,
-        emailVerifySentAt: new Date(),
+        emailVerifySentAt: requireEmailVerification ? new Date() : null,
       },
     });
 
@@ -73,24 +79,32 @@ export async function POST(request: Request) {
     // Create pre-loaded relationship types for new user
     await createPreloadedRelationshipTypes(prisma, user.id);
 
-    // Send verification email
-    const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
-    const verificationUrl = `${baseUrl}/verify-email?token=${verifyToken}`;
-    const { subject, html, text } = emailTemplates.accountVerification(verificationUrl);
+    // Send verification email only in SaaS mode
+    if (requireEmailVerification) {
+      const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
+      const verificationUrl = `${baseUrl}/verify-email?token=${verifyToken}`;
+      const { subject, html, text } = emailTemplates.accountVerification(verificationUrl);
 
-    await sendEmail({
-      to: email,
-      subject,
-      html,
-      text,
-      from: 'accounts',
+      await sendEmail({
+        to: email,
+        subject,
+        html,
+        text,
+        from: 'accounts',
+      });
+    }
+
+    logger.info('User registered successfully', {
+      email,
+      userId: user.id,
+      emailVerificationRequired: requireEmailVerification,
     });
-
-    logger.info('User registered successfully', { email, userId: user.id });
 
     return NextResponse.json(
       {
-        message: 'Account created. Please check your email to verify your account.',
+        message: requireEmailVerification
+          ? 'Account created. Please check your email to verify your account.'
+          : 'Account created successfully. You can now log in.',
         user: {
           id: user.id,
           email: user.email,

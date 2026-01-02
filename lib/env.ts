@@ -15,9 +15,9 @@ const envSchema = z.object({
     .string()
     .min(32, 'NEXTAUTH_SECRET must be at least 32 characters'),
 
-  // Email (Resend)
-  RESEND_API_KEY: z.string().min(1, 'RESEND_API_KEY is required'),
-  EMAIL_DOMAIN: z.string().min(1, 'EMAIL_DOMAIN is required'),
+  // Email (Resend) - Only required in SaaS mode
+  RESEND_API_KEY: z.string().min(1, 'RESEND_API_KEY is required').optional(),
+  EMAIL_DOMAIN: z.string().min(1, 'EMAIL_DOMAIN is required').optional(),
 
   // Cron
   CRON_SECRET: z.string().min(16, 'CRON_SECRET must be at least 16 characters'),
@@ -53,6 +53,14 @@ function validateEnv(): Env {
     console.error(errors.join('\n'));
     console.error('\nPlease check your .env file.\n');
 
+    throw new Error('Invalid environment configuration');
+  }
+
+  // Additional validation: Email settings required in SaaS mode
+  if (result.data.SAAS_MODE && (!result.data.RESEND_API_KEY || !result.data.EMAIL_DOMAIN)) {
+    console.error('\n❌ Invalid environment variables:\n');
+    console.error('  - RESEND_API_KEY and EMAIL_DOMAIN are required when SAAS_MODE is enabled');
+    console.error('\nPlease check your .env file.\n');
     throw new Error('Invalid environment configuration');
   }
 

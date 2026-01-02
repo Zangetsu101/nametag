@@ -51,7 +51,13 @@ NameTag solves this by giving you a single place to manage your personal network
 
 **Hosted Service**: We offer a hosted version at [nametag.one](https://nametag.one) with a generous free tier (50 people) and affordable paid plans starting at $1/month. The hosted service helps fund development and maintenance of the open source project.
 
-**Self-Hosting**: You can also run NameTag on your own infrastructure for free. This guide covers self-hosting setup.
+**Self-Hosting**: You can also run NameTag on your own infrastructure for free with these benefits:
+- No account limits - store unlimited contacts
+- No email service required - accounts are auto-verified
+- Complete data ownership and privacy
+- Free forever
+
+This guide covers self-hosting setup.
 
 ## Self-Hosting with Docker
 
@@ -92,8 +98,6 @@ services:
       - NEXTAUTH_URL=${NEXTAUTH_URL}
       - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL}
       - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
-      - RESEND_API_KEY=${RESEND_API_KEY}
-      - EMAIL_DOMAIN=${EMAIL_DOMAIN}
       - CRON_SECRET=${CRON_SECRET}
       - REDIS_URL=redis://:${REDIS_PASSWORD}@redis:6379
       - REDIS_PASSWORD=${REDIS_PASSWORD}
@@ -136,12 +140,14 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 # NextAuth (must be at least 32 characters)
 NEXTAUTH_SECRET=your-nextauth-secret-minimum-32-characters
 
-# Email (sign up at https://resend.com)
-RESEND_API_KEY=re_your_api_key
-EMAIL_DOMAIN=yourdomain.com
-
 # Cron authentication
 CRON_SECRET=your-cron-secret-minimum-16-characters
+
+# Email (OPTIONAL - only needed for password resets and reminders)
+# Self-hosted instances work without email - new accounts are auto-verified
+# Sign up at https://resend.com if you want email functionality
+#RESEND_API_KEY=re_your_api_key
+#EMAIL_DOMAIN=yourdomain.com
 ```
 
 4. Start the services:
@@ -163,8 +169,6 @@ The database will be automatically set up on first run.
 | `NEXTAUTH_URL` | Full URL where your app is hosted | `https://yourdomain.com` |
 | `NEXT_PUBLIC_APP_URL` | Public URL for redirects | `https://yourdomain.com` |
 | `NEXTAUTH_SECRET` | Secret for JWT encryption (min 32 chars) | Generate with `openssl rand -base64 32` |
-| `RESEND_API_KEY` | API key from [Resend](https://resend.com) | `re_xxxxxxxxxxxx` |
-| `EMAIL_DOMAIN` | Verified domain for sending emails | `yourdomain.com` |
 | `CRON_SECRET` | Secret for cron job authentication | Generate with `openssl rand -base64 16` |
 | `REDIS_URL` | Redis connection URL | `redis://:password@redis:6379` |
 | `REDIS_PASSWORD` | Redis authentication password | Generate with `openssl rand -base64 32` |
@@ -173,19 +177,26 @@ The database will be automatically set up on first run.
 
 | Variable | Description | Default |
 |----------|-------------|---------|
+| `RESEND_API_KEY` | API key from [Resend](https://resend.com) for email functionality | Not required for self-hosted |
+| `EMAIL_DOMAIN` | Verified domain for sending emails | Not required for self-hosted |
 | `NODE_ENV` | Environment mode | `production` |
 | `LOG_LEVEL` | Logging verbosity | `info` |
 
-### Email Setup
+### Email Setup (Optional)
 
-NameTag uses [Resend](https://resend.com) for transactional emails (account verification, password resets, reminders).
+Email configuration is **optional for self-hosted instances**. NameTag works perfectly without it:
 
-1. Sign up for a free Resend account
+- **Without email**: New accounts are automatically verified and users can log in immediately. Password resets and contact reminders are unavailable.
+- **With email**: Enables password reset functionality and contact reminder emails via [Resend](https://resend.com).
+
+If you want email functionality:
+
+1. Sign up for a free Resend account at [resend.com](https://resend.com)
 2. Add and verify your domain
 3. Create an API key
-4. Add the API key and domain to your `.env` file
+4. Add `RESEND_API_KEY` and `EMAIL_DOMAIN` to your `.env` file
 
-Without email configured, users won't be able to register, reset passwords or receive reminders.
+**Note**: The hosted service at [nametag.one](https://nametag.one) requires email verification for security, but self-hosted instances are designed for personal use and auto-verify all accounts.
 
 ### Reverse Proxy (Production)
 

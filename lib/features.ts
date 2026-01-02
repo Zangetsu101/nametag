@@ -7,9 +7,10 @@ import { env } from './env';
  * - Billing UI and payment processing
  * - Tier-based resource limits
  * - Usage tracking and meters
+ * - Email verification for new accounts
  *
  * When disabled (default), the application runs in "self-hosted" mode
- * with unlimited resources and no billing.
+ * with unlimited resources, no billing, and no email verification required.
  */
 export function isSaasMode(): boolean {
   return env.SAAS_MODE === true;
@@ -32,6 +33,9 @@ export const features = {
 
   /** Show upgrade CTAs and pricing */
   upgradeCtas: () => isSaasMode(),
+
+  /** Require email verification for new accounts */
+  emailVerification: () => isSaasMode(),
 };
 
 /**

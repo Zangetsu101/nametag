@@ -16,6 +16,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         // Lazy load Prisma and bcrypt to avoid edge runtime issues
         const { prisma } = await import('@/lib/prisma');
         const bcrypt = await import('bcryptjs');
+        const { isFeatureEnabled } = await import('@/lib/features');
 
         if (!credentials?.email || !credentials?.password) {
           return null;
@@ -40,8 +41,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           return null;
         }
 
-        // Check if email is verified
-        if (!user.emailVerified) {
+        // Check if email is verified (only in SaaS mode)
+        if (isFeatureEnabled('emailVerification') && !user.emailVerified) {
           throw new Error('EMAIL_NOT_VERIFIED');
         }
 
