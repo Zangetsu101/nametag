@@ -13,7 +13,7 @@ datasource db {
 model User {
   id                 String    @id @default(cuid())
   email              String    @unique
-  password           String
+  password           String?   // Optional for OAuth users
   name               String
   surname            String?
   nickname           String?
@@ -27,6 +27,11 @@ model User {
   passwordResetExpires DateTime?
   passwordResetSentAt  DateTime?
   lastLoginAt        DateTime?
+
+  // OAuth fields
+  provider           String?   // e.g., "google", "credentials"
+  providerAccountId  String?   // OAuth provider's user ID
+
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @updatedAt
 
@@ -36,6 +41,7 @@ model User {
   relationshipTypes RelationshipType[]
   subscription      Subscription?
 
+  @@unique([provider, providerAccountId])
   @@map("users")
 }
 

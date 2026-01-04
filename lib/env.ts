@@ -19,6 +19,10 @@ const envSchema = z.object({
   RESEND_API_KEY: z.string().min(1, 'RESEND_API_KEY is required').optional(),
   EMAIL_DOMAIN: z.string().min(1, 'EMAIL_DOMAIN is required').optional(),
 
+  // Google OAuth - Only required in SaaS mode
+  GOOGLE_CLIENT_ID: z.string().optional(),
+  GOOGLE_CLIENT_SECRET: z.string().optional(),
+
   // Cron
   CRON_SECRET: z.string().min(16, 'CRON_SECRET must be at least 16 characters'),
 
@@ -56,12 +60,21 @@ function validateEnv(): Env {
     throw new Error('Invalid environment configuration');
   }
 
-  // Additional validation: Email settings required in SaaS mode
-  if (result.data.SAAS_MODE && (!result.data.RESEND_API_KEY || !result.data.EMAIL_DOMAIN)) {
-    console.error('\n❌ Invalid environment variables:\n');
-    console.error('  - RESEND_API_KEY and EMAIL_DOMAIN are required when SAAS_MODE is enabled');
-    console.error('\nPlease check your .env file.\n');
-    throw new Error('Invalid environment configuration');
+  // Additional validation: Email and OAuth settings required in SaaS mode
+  if (result.data.SAAS_MODE) {
+    const missing = [];
+
+    if (!result.data.RESEND_API_KEY) missing.push('RESEND_API_KEY');
+    if (!result.data.EMAIL_DOMAIN) missing.push('EMAIL_DOMAIN');
+    if (!result.data.GOOGLE_CLIENT_ID) missing.push('GOOGLE_CLIENT_ID');
+    if (!result.data.GOOGLE_CLIENT_SECRET) missing.push('GOOGLE_CLIENT_SECRET');
+
+    if (missing.length > 0) {
+      console.error('\n❌ Invalid environment variables:\n');
+      console.error(`  - The following are required when SAAS_MODE is enabled: ${missing.join(', ')}`);
+      console.error('\nPlease check your .env file.\n');
+      throw new Error('Invalid environment configuration');
+    }
   }
 
   return result.data;

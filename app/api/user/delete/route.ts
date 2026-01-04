@@ -8,10 +8,6 @@ export const DELETE = withAuth(async (request, session) => {
     const body = await parseRequestBody<{ password?: string; confirmationText?: string }>(request);
     const { password, confirmationText } = body;
 
-    if (!password) {
-      return apiResponse.error('Password is required');
-    }
-
     // Verify confirmation text
     if (confirmationText !== 'DELETE') {
       return apiResponse.error('Confirmation text must be "DELETE"');
@@ -26,11 +22,17 @@ export const DELETE = withAuth(async (request, session) => {
       return apiResponse.notFound('User not found');
     }
 
-    // Verify password
-    const passwordMatch = await bcrypt.compare(password, user.password);
+    // Verify password (only for users with password - OAuth users don't have passwords)
+    if (user.password) {
+      if (!password) {
+        return apiResponse.error('Password is required');
+      }
 
-    if (!passwordMatch) {
-      return apiResponse.error('Password is incorrect');
+      const passwordMatch = await bcrypt.compare(password, user.password);
+
+      if (!passwordMatch) {
+        return apiResponse.error('Password is incorrect');
+      }
     }
 
     // Delete user (cascade will delete all related data)

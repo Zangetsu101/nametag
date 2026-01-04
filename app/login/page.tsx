@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import { useState, FormEvent, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { GoogleSignInButton } from '@/components/GoogleSignInButton';
+import { fetchAvailableProviders } from '@/lib/client-features';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -16,6 +18,14 @@ export default function LoginPage() {
   const [resendLoading, setResendLoading] = useState(false);
   const [resendSuccess, setResendSuccess] = useState(false);
   const [resendCooldown, setResendCooldown] = useState(0);
+  const [showGoogleAuth, setShowGoogleAuth] = useState(false);
+
+  // Fetch available providers
+  useEffect(() => {
+    fetchAvailableProviders().then((providers) => {
+      setShowGoogleAuth(providers.google);
+    });
+  }, []);
 
   // Countdown timer for cooldown
   useEffect(() => {
@@ -114,6 +124,23 @@ export default function LoginPage() {
             Sign in to manage your relationships
           </p>
         </div>
+
+        {showGoogleAuth && (
+          <div className="mt-8">
+            <GoogleSignInButton mode="signin" />
+            <div className="relative my-6">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-300 dark:border-gray-700"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-gray-50 dark:bg-gray-900 text-gray-500 dark:text-gray-400">
+                  Or continue with email
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
+
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           {resendSuccess && (
             <div className="bg-green-50 dark:bg-green-900/20 border border-green-400 dark:border-green-800 text-green-700 dark:text-green-400 px-4 py-3 rounded">

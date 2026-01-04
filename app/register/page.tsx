@@ -1,9 +1,11 @@
 'use client';
 
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { PasswordStrengthIndicator } from '@/components/PasswordStrengthIndicator';
+import { GoogleSignInButton } from '@/components/GoogleSignInButton';
+import { fetchAvailableProviders } from '@/lib/client-features';
 
 export default function RegisterPage() {
   const [name, setName] = useState('');
@@ -16,6 +18,14 @@ export default function RegisterPage() {
   const [validationErrors, setValidationErrors] = useState<Array<{ field: string; message: string }>>([]);
   const [success, setSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [showGoogleAuth, setShowGoogleAuth] = useState(false);
+
+  // Fetch available providers
+  useEffect(() => {
+    fetchAvailableProviders().then((providers) => {
+      setShowGoogleAuth(providers.google);
+    });
+  }, []);
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -126,6 +136,23 @@ export default function RegisterPage() {
             Start managing your relationships with NameTag
           </p>
         </div>
+
+        {showGoogleAuth && (
+          <div className="mt-8">
+            <GoogleSignInButton mode="signup" />
+            <div className="relative my-6">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-300 dark:border-gray-700"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-gray-50 dark:bg-gray-900 text-gray-500 dark:text-gray-400">
+                  Or sign up with email
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
+
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           {error && (
             <div className="bg-red-50 dark:bg-red-900/20 border border-red-400 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-3 rounded">

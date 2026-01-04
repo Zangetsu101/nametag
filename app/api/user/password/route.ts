@@ -23,6 +23,11 @@ export const PUT = withAuth(async (request, session) => {
       return apiResponse.notFound('User not found');
     }
 
+    // OAuth users don't have passwords
+    if (!user.password) {
+      return apiResponse.error('Cannot change password for OAuth accounts');
+    }
+
     // Verify current password
     const passwordMatch = await bcrypt.compare(currentPassword, user.password);
 

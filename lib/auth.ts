@@ -1,12 +1,12 @@
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
+import Google from 'next-auth/providers/google';
+import { env } from '@/lib/env';
+import { isSaasMode } from '@/lib/features';
 
-export const { handlers, signIn, signOut, auth } = NextAuth({
-  // Trust host header in production (required for Docker/proxy deployments)
-  trustHost: true,
-  
-  providers: [
-    CredentialsProvider({
+// Build providers list based on mode
+const providers = [
+  CredentialsProvider({
       name: 'credentials',
       credentials: {
         email: { label: 'Email', type: 'email' },
@@ -29,6 +29,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         });
 
         if (!user) {
+          return null;
+        }
+
+        // OAuth users don't have passwords - they must use OAuth to sign in
+        if (!user.password) {
           return null;
         }
 
@@ -61,8 +66,75 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         };
       },
     }),
-  ],
+  // Add Google provider only in SaaS mode
+  ...(isSaasMode() && env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET
+    ? [
+        Google({
+          clientId: env.GOOGLE_CLIENT_ID,
+          clientSecret: env.GOOGLE_CLIENT_SECRET,
+        }),
+      ]
+    : []),
+];
+
+export const { handlers, signIn, signOut, auth } = NextAuth({
+  // Trust host header in production (required for Docker/proxy deployments)
+  trustHost: true,
+
+  providers,
   callbacks: {
+    async signIn({ user, account, profile }) {
+      // Handle OAuth sign-in
+      if (account?.provider === 'google' && profile) {
+        const { prisma } = await import('@/lib/prisma');
+        const { createFreeSubscription } = await import('@/lib/billing');
+        const { createPreloadedRelationshipTypes } = await import('@/lib/relationship-types');
+
+        // Check if user exists with this email
+        const existingUser = await prisma.user.findUnique({
+          where: { email: user.email! },
+        });
+
+        if (existingUser) {
+          // If user exists but doesn't have OAuth linked, link it
+          if (!existingUser.provider || !existingUser.providerAccountId) {
+            await prisma.user.update({
+              where: { id: existingUser.id },
+              data: {
+                provider: account.provider,
+                providerAccountId: account.providerAccountId,
+                emailVerified: true, // OAuth emails are pre-verified
+              },
+            });
+          }
+          // Update user object with existing user's ID for JWT callback
+          user.id = existingUser.id;
+        } else {
+          // Create new user with OAuth
+          const newUser = await prisma.user.create({
+            data: {
+              email: user.email!,
+              name: profile.given_name || user.name || 'User',
+              surname: profile.family_name || null,
+              provider: account.provider,
+              providerAccountId: account.providerAccountId,
+              emailVerified: true, // OAuth emails are pre-verified
+            },
+          });
+
+          // Create free subscription
+          await createFreeSubscription(newUser.id);
+
+          // Create pre-loaded relationship types
+          await createPreloadedRelationshipTypes(prisma, newUser.id);
+
+          // Update user object with new user's ID for JWT callback
+          user.id = newUser.id;
+        }
+      }
+
+      return true;
+    },
     async jwt({ token, user, trigger, session }) {
       if (user) {
         token.id = user.id;
