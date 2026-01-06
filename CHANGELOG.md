@@ -6,27 +6,36 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
-## [0.4.0](https://github.com/mattogodoy/nametag/compare/v0.3.0...v0.4.0) (2026-01-06)
+## [0.5.0](https://github.com/mattogodoy/nametag/compare/v0.4.0...v0.5.0) (2026-01-06)
 
 ### Features
 
-* Added an option to delete people too when deleting groups ([0f52a8d](https://github.com/mattogodoy/nametag/commit/0f52a8d9d792ed9c161c30e77d76e7ead831aa1c))
+* Added re-center button for network graphs ([a665ef2](https://github.com/mattogodoy/nametag/commit/a665ef208a471ae398cceb9e50079f222d5e62bd))
 
 ### Bug Fixes
 
-* Don't allow data export when there's no data ([3734633](https://github.com/mattogodoy/nametag/commit/3734633c63346fbecb762b865ddd987196be9352))
-* Fix orphan detection. It broke after implementing soft-delete ([c6e02e6](https://github.com/mattogodoy/nametag/commit/c6e02e67703a7ad58d4840f81ea5f1af58973f43))
-* Minor visual improvements ([5e7f155](https://github.com/mattogodoy/nametag/commit/5e7f1550f3f01aee441ecb75b32d530bf5337d32))
+* Fixed relationship inconsistencies in the dashboard graph ([d3cfb47](https://github.com/mattogodoy/nametag/commit/d3cfb47ef091caf98d88785eccd9621aa9ae445c))
+* Imprived network graph ([df2859f](https://github.com/mattogodoy/nametag/commit/df2859fdc4e4da821ddd286508ccbbef012ce574))
 
 ### Changelog
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.5.0](https://github.com/mattogodoy/nametag/compare/v0.4.0...v0.5.0)
+
+- 🐛 Fix: Imprived network graph [`df2859f`](https://github.com/mattogodoy/nametag/commit/df2859fdc4e4da821ddd286508ccbbef012ce574)
+- ✨ Feature: Added re-center button for network graphs [`a665ef2`](https://github.com/mattogodoy/nametag/commit/a665ef208a471ae398cceb9e50079f222d5e62bd)
+- 🐛 Fix: Fixed relationship inconsistencies in the dashboard graph [`d3cfb47`](https://github.com/mattogodoy/nametag/commit/d3cfb47ef091caf98d88785eccd9621aa9ae445c)
+- 🔧 Chore: Improve readability on billing prices [`151446f`](https://github.com/mattogodoy/nametag/commit/151446f6466c3b3f7c73b4f716ce38f0b70ff499)
+
 #### [v0.4.0](https://github.com/mattogodoy/nametag/compare/v0.3.0...v0.4.0)
+
+> 6 January 2026
 
 - ✨ Feature: Added an option to delete people too when deleting groups [`0f52a8d`](https://github.com/mattogodoy/nametag/commit/0f52a8d9d792ed9c161c30e77d76e7ead831aa1c)
 - 🐛 Fix: Fix orphan detection. It broke after implementing soft-delete [`c6e02e6`](https://github.com/mattogodoy/nametag/commit/c6e02e67703a7ad58d4840f81ea5f1af58973f43)
 - 🐛 Fix: Don't allow data export when there's no data [`3734633`](https://github.com/mattogodoy/nametag/commit/3734633c63346fbecb762b865ddd987196be9352)
+- 🔧 Chore: release v0.4.0 [`2dd18a9`](https://github.com/mattogodoy/nametag/commit/2dd18a9d4c07fd93587cc427f3693e001f205968)
 - 🐛 Fix: Minor visual improvements [`5e7f155`](https://github.com/mattogodoy/nametag/commit/5e7f1550f3f01aee441ecb75b32d530bf5337d32)
 
 #### [v0.3.0](https://github.com/mattogodoy/nametag/compare/v0.2.2...v0.3.0)
