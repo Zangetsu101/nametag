@@ -6,21 +6,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
-## [0.2.1](https://github.com/mattogodoy/nametag/compare/v0.2.0...v0.2.1) (2026-01-05)
+## [0.2.2](https://github.com/mattogodoy/nametag/compare/v0.2.1...v0.2.2) (2026-01-06)
 
 ### Bug Fixes
 
-* Enforce tier limits on imports ([6429c59](https://github.com/mattogodoy/nametag/commit/6429c593b6d6550e2279e386e05fda4561e6b56c))
-* Fixed error when selecting days for remider periods ([8ec7328](https://github.com/mattogodoy/nametag/commit/8ec7328e75c5e8f5552e33d883ee54acbc4e3eba))
+* Improve menu on mobile ([23603d2](https://github.com/mattogodoy/nametag/commit/23603d22ba6f3d9bfbdbf7b6f3c0846cd6930995))
+* Prevent race condition between release and Docker build workflows ([0aeae76](https://github.com/mattogodoy/nametag/commit/0aeae764e668020fdc410eeebcad019ce8b1a969))
 
 ### Changelog
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.2.2](https://github.com/mattogodoy/nametag/compare/v0.2.1...v0.2.2)
+
+- 🐛 Fix: Improve menu on mobile [`23603d2`](https://github.com/mattogodoy/nametag/commit/23603d22ba6f3d9bfbdbf7b6f3c0846cd6930995)
+- 🐛 Fix: Prevent race condition between release and Docker build workflows [`0aeae76`](https://github.com/mattogodoy/nametag/commit/0aeae764e668020fdc410eeebcad019ce8b1a969)
+- 🔧 Chore: trigger Docker rebuild for v0.2.1 [`f45ab5a`](https://github.com/mattogodoy/nametag/commit/f45ab5ac9837bfff26447ab602febc5fd038875d)
+
 #### [v0.2.1](https://github.com/mattogodoy/nametag/compare/v0.2.0...v0.2.1)
+
+> 5 January 2026
 
 - 🐛 Fix: Enforce tier limits on imports [`6429c59`](https://github.com/mattogodoy/nametag/commit/6429c593b6d6550e2279e386e05fda4561e6b56c)
 - 🐛 Fix: Fixed error when selecting days for remider periods [`8ec7328`](https://github.com/mattogodoy/nametag/commit/8ec7328e75c5e8f5552e33d883ee54acbc4e3eba)
+- 🔧 Chore: release v0.2.1 [`2baaf79`](https://github.com/mattogodoy/nametag/commit/2baaf7914ce6be6606c577c8cee1b5a0c6fd9ed2)
 
 #### [v0.2.0](https://github.com/mattogodoy/nametag/compare/v0.1.4...v0.2.0)
 
