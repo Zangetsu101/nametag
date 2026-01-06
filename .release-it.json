@@ -13,7 +13,7 @@
   "github": {
     "release": true,
     "releaseName": "v${version}",
-    "releaseNotes": "npx auto-changelog --stdout --commit-limit false -v ${version} --template compact"
+    "releaseNotes": "./scripts/generate-release-notes.sh ${version}"
   },
   "npm": {
     "publish": false
