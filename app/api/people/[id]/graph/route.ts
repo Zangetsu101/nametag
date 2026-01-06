@@ -68,11 +68,41 @@ export const GET = withAuth(async (_request, session, context) => {
                     group: true,
                   },
                 },
+                // Fetch relationships between connected people
+                relationshipsFrom: {
+                  where: {
+                    deletedAt: null,
+                    relatedPerson: {
+                      deletedAt: null,
+                    },
+                  },
+                  include: {
+                    relationshipType: {
+                      where: {
+                        deletedAt: null,
+                      },
+                      include: {
+                        inverse: {
+                          where: {
+                            deletedAt: null,
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
               },
             },
             relationshipType: {
               where: {
                 deletedAt: null,
+              },
+              include: {
+                inverse: {
+                  where: {
+                    deletedAt: null,
+                  },
+                },
               },
             },
           },
@@ -120,7 +150,7 @@ export const GET = withAuth(async (_request, session, context) => {
       });
     }
 
-    // Add related people as nodes and create edges
+    // Add related people as nodes
     person.relationshipsFrom.forEach((rel) => {
       if (!nodeIds.has(rel.relatedPersonId)) {
         nodes.push({
@@ -133,15 +163,7 @@ export const GET = withAuth(async (_request, session, context) => {
         nodeIds.add(rel.relatedPersonId);
       }
 
-      // Add edge from person to related person
-      edges.push({
-        source: person.id,
-        target: rel.relatedPersonId,
-        type: rel.relationshipType?.label || 'Unknown',
-        color: rel.relationshipType?.color || '#999999',
-      });
-
-      // If the related person has a direct relationship to the user, add that edge too
+      // If the related person has a direct relationship to the user, add that edge
       if (rel.relatedPerson.relationshipToUser) {
         edges.push({
           source: rel.relatedPersonId,
@@ -150,6 +172,76 @@ export const GET = withAuth(async (_request, session, context) => {
           color: rel.relatedPerson.relationshipToUser.color || '#9CA3AF',
         });
       }
+    });
+
+    // Build edges with deduplication (same logic as dashboard)
+    const addedEdges = new Set<string>();
+
+    // Add edges from center person to related people
+    person.relationshipsFrom.forEach((rel) => {
+      if (nodeIds.has(rel.relatedPersonId)) {
+        // Use lexicographic ordering to deduplicate bidirectional relationships
+        const isSwapped = person.id > rel.relatedPersonId;
+        const sourceId = isSwapped ? rel.relatedPersonId : person.id;
+        const targetId = isSwapped ? person.id : rel.relatedPersonId;
+        const edgeKey = `${sourceId}-${targetId}`;
+
+        // Only add if we haven't already added this edge
+        if (!addedEdges.has(edgeKey)) {
+          addedEdges.add(edgeKey);
+
+          // If we swapped the direction, use the inverse relationship label
+          const relationshipLabel = isSwapped && rel.relationshipType?.inverse
+            ? rel.relationshipType.inverse.label
+            : (rel.relationshipType?.label || 'Unknown');
+
+          const relationshipColor = isSwapped && rel.relationshipType?.inverse
+            ? rel.relationshipType.inverse.color
+            : (rel.relationshipType?.color || '#999999');
+
+          edges.push({
+            source: sourceId,
+            target: targetId,
+            type: relationshipLabel,
+            color: relationshipColor || '#999999',
+          });
+        }
+      }
+    });
+
+    // Add edges between related people (relationships within the network)
+    person.relationshipsFrom.forEach((rel) => {
+      rel.relatedPerson.relationshipsFrom?.forEach((subRel) => {
+        // Only add edges where both nodes exist in our network
+        if (nodeIds.has(subRel.relatedPersonId)) {
+          // Use lexicographic ordering to deduplicate bidirectional relationships
+          const isSwapped = rel.relatedPersonId > subRel.relatedPersonId;
+          const sourceId = isSwapped ? subRel.relatedPersonId : rel.relatedPersonId;
+          const targetId = isSwapped ? rel.relatedPersonId : subRel.relatedPersonId;
+          const edgeKey = `${sourceId}-${targetId}`;
+
+          // Only add if we haven't already added this edge
+          if (!addedEdges.has(edgeKey)) {
+            addedEdges.add(edgeKey);
+
+            // If we swapped the direction, use the inverse relationship label
+            const relationshipLabel = isSwapped && subRel.relationshipType?.inverse
+              ? subRel.relationshipType.inverse.label
+              : (subRel.relationshipType?.label || 'Unknown');
+
+            const relationshipColor = isSwapped && subRel.relationshipType?.inverse
+              ? subRel.relationshipType.inverse.color
+              : (subRel.relationshipType?.color || '#999999');
+
+            edges.push({
+              source: sourceId,
+              target: targetId,
+              type: relationshipLabel,
+              color: relationshipColor || '#999999',
+            });
+          }
+        }
+      });
     });
 
     return apiResponse.ok({ nodes, edges });
