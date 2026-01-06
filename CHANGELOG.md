@@ -6,27 +6,48 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
-## [0.5.0](https://github.com/mattogodoy/nametag/compare/v0.4.0...v0.5.0) (2026-01-06)
+## [0.6.0](https://github.com/mattogodoy/nametag/compare/v0.5.0...v0.6.0) (2026-01-06)
 
 ### Features
 
-* Added re-center button for network graphs ([a665ef2](https://github.com/mattogodoy/nametag/commit/a665ef208a471ae398cceb9e50079f222d5e62bd))
+* Allow filtering graph by multiple groups ([73fe3e0](https://github.com/mattogodoy/nametag/commit/73fe3e00f2e4eeadbf8f6b8e28750ddd8917930d))
+* Allows for adding people during group creation ([ee1be0c](https://github.com/mattogodoy/nametag/commit/ee1be0c8c725487b27dd84577572588c287620db))
 
 ### Bug Fixes
 
-* Fixed relationship inconsistencies in the dashboard graph ([d3cfb47](https://github.com/mattogodoy/nametag/commit/d3cfb47ef091caf98d88785eccd9621aa9ae445c))
-* Imprived network graph ([df2859f](https://github.com/mattogodoy/nametag/commit/df2859fdc4e4da821ddd286508ccbbef012ce574))
+* Fix some linting issues ([048f330](https://github.com/mattogodoy/nametag/commit/048f330b4a24f4e232d032386cb064c2cecbcda8))
+* Fixed failing tests ([190818f](https://github.com/mattogodoy/nametag/commit/190818f6f07e91d28a86ed9d4371f321f3a3ad56))
+* Improved navigation by adding creation shortcuts ([c755932](https://github.com/mattogodoy/nametag/commit/c755932f08a256912a469e0b8bee1065ab7f7cfc))
+* Improvements for the pill input component ([bd40a91](https://github.com/mattogodoy/nametag/commit/bd40a919a990185dd6c3324dca50f5d6cf2f9985))
+* Limit GitHub release notes to current version only ([eab6c6f](https://github.com/mattogodoy/nametag/commit/eab6c6f383785ae58b34c3ebd1a26c1fb5baaac3))
 
 ### Changelog
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.6.0](https://github.com/mattogodoy/nametag/compare/v0.5.0...v0.6.0)
+
+- ✨ Feature: Allows for adding people during group creation [`ee1be0c`](https://github.com/mattogodoy/nametag/commit/ee1be0c8c725487b27dd84577572588c287620db)
+- ✨ Feature: Allow filtering graph by multiple groups [`73fe3e0`](https://github.com/mattogodoy/nametag/commit/73fe3e00f2e4eeadbf8f6b8e28750ddd8917930d)
+- 🐛 Fix: Improved navigation by adding creation shortcuts [`c755932`](https://github.com/mattogodoy/nametag/commit/c755932f08a256912a469e0b8bee1065ab7f7cfc)
+- 🔧 Chore: Remove stats from dashboard [`0c08576`](https://github.com/mattogodoy/nametag/commit/0c085764c4e7aa1f36747a8ae1a6b0f8a2324a46)
+- 🔧 Chore: Move upcoming events to the top [`905f63d`](https://github.com/mattogodoy/nametag/commit/905f63d031fe3057bc259e13ff41905d59d0c966)
+- 🔧 Chore: Add visual cues for group creation during person creation [`8c7d603`](https://github.com/mattogodoy/nametag/commit/8c7d6035007822b24318168d402bdd94ed8b244c)
+- 🔧 Chore: Added tooltip with information [`69f16ef`](https://github.com/mattogodoy/nametag/commit/69f16ef5981b63c05619084edc017e1c97ef559d)
+- 🐛 Fix: Improvements for the pill input component [`bd40a91`](https://github.com/mattogodoy/nametag/commit/bd40a919a990185dd6c3324dca50f5d6cf2f9985)
+- 🐛 Fix: Limit GitHub release notes to current version only [`eab6c6f`](https://github.com/mattogodoy/nametag/commit/eab6c6f383785ae58b34c3ebd1a26c1fb5baaac3)
+- 🐛 Fix: Fixed failing tests [`190818f`](https://github.com/mattogodoy/nametag/commit/190818f6f07e91d28a86ed9d4371f321f3a3ad56)
+- 🐛 Fix: Fix some linting issues [`048f330`](https://github.com/mattogodoy/nametag/commit/048f330b4a24f4e232d032386cb064c2cecbcda8)
+
 #### [v0.5.0](https://github.com/mattogodoy/nametag/compare/v0.4.0...v0.5.0)
+
+> 6 January 2026
 
 - 🐛 Fix: Imprived network graph [`df2859f`](https://github.com/mattogodoy/nametag/commit/df2859fdc4e4da821ddd286508ccbbef012ce574)
 - ✨ Feature: Added re-center button for network graphs [`a665ef2`](https://github.com/mattogodoy/nametag/commit/a665ef208a471ae398cceb9e50079f222d5e62bd)
 - 🐛 Fix: Fixed relationship inconsistencies in the dashboard graph [`d3cfb47`](https://github.com/mattogodoy/nametag/commit/d3cfb47ef091caf98d88785eccd9621aa9ae445c)
 - 🔧 Chore: Improve readability on billing prices [`151446f`](https://github.com/mattogodoy/nametag/commit/151446f6466c3b3f7c73b4f716ce38f0b70ff499)
+- 🔧 Chore: release v0.5.0 [`8bb1e12`](https://github.com/mattogodoy/nametag/commit/8bb1e12bc90193dd8d3e0c7a230b63600cfb9d52)
 
 #### [v0.4.0](https://github.com/mattogodoy/nametag/compare/v0.3.0...v0.4.0)
 
