@@ -6,20 +6,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
-## [0.2.2](https://github.com/mattogodoy/nametag/compare/v0.2.1...v0.2.2) (2026-01-06)
+## [0.3.0](https://github.com/mattogodoy/nametag/compare/v0.2.2...v0.3.0) (2026-01-06)
 
-### Bug Fixes
+### Features
 
-* Improve menu on mobile ([23603d2](https://github.com/mattogodoy/nametag/commit/23603d22ba6f3d9bfbdbf7b6f3c0846cd6930995))
-* Prevent race condition between release and Docker build workflows ([0aeae76](https://github.com/mattogodoy/nametag/commit/0aeae764e668020fdc410eeebcad019ce8b1a969))
+* Improved setings navigation menu ([5634396](https://github.com/mattogodoy/nametag/commit/5634396024426cfa9037fe8ae2acd05c08b1bbdc))
 
 ### Changelog
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.3.0](https://github.com/mattogodoy/nametag/compare/v0.2.2...v0.3.0)
+
+- Improved setings navigation menu [`29b7751`](https://github.com/mattogodoy/nametag/commit/29b77515144b5f48255a5fd1cfcfdbfedd057743)
+- ✨ Feature: Improved setings navigation menu [`5634396`](https://github.com/mattogodoy/nametag/commit/5634396024426cfa9037fe8ae2acd05c08b1bbdc)
+- 🔧 Chore: Merge Github Actions Workflows into one [`7573553`](https://github.com/mattogodoy/nametag/commit/75735535863bf6643b29c89bf2ccf2842a81b6b7)
+
 #### [v0.2.2](https://github.com/mattogodoy/nametag/compare/v0.2.1...v0.2.2)
 
+> 6 January 2026
+
 - 🐛 Fix: Improve menu on mobile [`23603d2`](https://github.com/mattogodoy/nametag/commit/23603d22ba6f3d9bfbdbf7b6f3c0846cd6930995)
+- 🔧 Chore: release v0.2.2 [`53550f8`](https://github.com/mattogodoy/nametag/commit/53550f8b4dd6463ac59a58c0de01b79d6b839a23)
 - 🐛 Fix: Prevent race condition between release and Docker build workflows [`0aeae76`](https://github.com/mattogodoy/nametag/commit/0aeae764e668020fdc410eeebcad019ce8b1a969)
 - 🔧 Chore: trigger Docker rebuild for v0.2.1 [`f45ab5a`](https://github.com/mattogodoy/nametag/commit/f45ab5ac9837bfff26447ab602febc5fd038875d)
 
