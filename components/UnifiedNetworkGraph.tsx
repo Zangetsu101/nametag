@@ -504,17 +504,17 @@ export default function UnifiedNetworkGraph({
             renderPill={(item, onRemove) => (
               <div
                 key={item.id}
-                className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-gray-100 dark:bg-gray-700 rounded-full text-sm font-medium"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary/20 border border-primary/40 rounded-full text-sm font-medium shadow-sm"
               >
                 <div
-                  className="w-3 h-3 rounded-full flex-shrink-0"
-                  style={{ backgroundColor: item.color || '#9CA3AF' }}
+                  className="w-3 h-3 rounded-full flex-shrink-0 ring-1 ring-white/50"
+                  style={{ backgroundColor: item.color || '#7bf080' }}
                 />
-                <span className="text-gray-900 dark:text-white">{item.label}</span>
+                <span className="text-foreground">{item.label}</span>
                 <button
                   type="button"
                   onClick={onRemove}
-                  className="hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full p-0.5 transition-colors text-gray-600 dark:text-gray-400"
+                  className="hover:bg-primary/30 rounded-full p-0.5 transition-colors text-primary"
                   aria-label={`Remove ${item.label}`}
                 >
                   <svg
@@ -539,15 +539,15 @@ export default function UnifiedNetworkGraph({
       <div className="relative">
         <svg
           ref={svgRef}
-          className="w-full h-[400px] sm:h-[500px] lg:h-[600px] bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700"
+          className="w-full h-[400px] sm:h-[500px] lg:h-[600px] bg-surface rounded-lg border-2 border-border"
         />
         <div className="absolute bottom-4 right-4 flex gap-2">
           <button
             onClick={() => setClusteringEnabled(!clusteringEnabled)}
-            className={`p-2.5 border rounded-lg shadow-lg hover:scale-105 active:scale-95 transition-all ${
+            className={`p-2.5 border-2 rounded-lg shadow-lg hover:scale-105 active:scale-95 transition-all ${
               clusteringEnabled
-                ? 'bg-blue-600 border-blue-600 text-white hover:bg-blue-700'
-                : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
+                ? 'bg-primary border-primary text-black hover:bg-primary-dark shadow-primary/50'
+                : 'bg-surface border-border text-foreground hover:bg-surface-elevated hover:border-primary/50'
             }`}
             aria-label="Cluster by group"
             title="Cluster by group"
@@ -568,12 +568,12 @@ export default function UnifiedNetworkGraph({
           </button>
           <button
             onClick={recenterGraph}
-            className="p-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg hover:bg-gray-50 dark:hover:bg-gray-700 hover:scale-105 active:scale-95 transition-all"
+            className="p-2.5 bg-surface border-2 border-border rounded-lg shadow-lg hover:bg-surface-elevated hover:border-secondary/50 hover:scale-105 active:scale-95 transition-all"
             aria-label="Re-center graph"
             title="Re-center graph"
           >
             <svg
-              className="w-5 h-5 text-gray-700 dark:text-gray-300"
+              className="w-5 h-5 text-secondary"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
