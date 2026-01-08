@@ -52,7 +52,7 @@ export default function Navigation({ userEmail, userName, userNickname, currentP
             <Link href="/dashboard" className="flex items-center flex-shrink-0">
               <Image
                 src="/logo.svg"
-                alt="NameTag Logo"
+                alt="Nametag Logo"
                 width={64}
                 height={64}
                 className="text-foreground"

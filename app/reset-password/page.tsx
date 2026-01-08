@@ -79,7 +79,7 @@ function ResetPasswordForm() {
           <div className="flex flex-col items-center">
             <Image
               src="/logo.svg"
-              alt="NameTag Logo"
+              alt="Nametag Logo"
               width={96}
               height={96}
               priority
@@ -111,7 +111,7 @@ function ResetPasswordForm() {
           <div className="flex flex-col items-center">
             <Image
               src="/logo.svg"
-              alt="NameTag Logo"
+              alt="Nametag Logo"
               width={96}
               height={96}
               priority
@@ -142,7 +142,7 @@ function ResetPasswordForm() {
         <div className="flex flex-col items-center">
           <Image
             src="/logo.svg"
-            alt="NameTag Logo"
+            alt="Nametag Logo"
             width={96}
             height={96}
             priority

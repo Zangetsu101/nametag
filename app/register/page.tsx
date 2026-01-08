@@ -124,7 +124,7 @@ export default function RegisterPage() {
         <div className="flex flex-col items-center">
           <Image
             src="/logo.svg"
-            alt="NameTag Logo"
+            alt="Nametag Logo"
             width={96}
             height={96}
             priority
@@ -133,7 +133,7 @@ export default function RegisterPage() {
             Create your account
           </h2>
           <p className="mt-2 text-center text-sm text-muted">
-            Start managing your relationships with NameTag
+            Start managing your relationships with Nametag
           </p>
         </div>
 

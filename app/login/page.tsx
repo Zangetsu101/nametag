@@ -115,13 +115,13 @@ export default function LoginPage() {
         <div className="flex flex-col items-center">
           <Image
             src="/logo.svg"
-            alt="NameTag Logo"
+            alt="Nametag Logo"
             width={192}
             height={192}
             priority
           />
           <h2 className="mt-6 text-center text-3xl font-bold text-foreground">
-            Welcome to NameTag
+            Welcome to Nametag
           </h2>
           <p className="mt-2 text-center text-sm text-muted">
             Sign in to manage your relationships

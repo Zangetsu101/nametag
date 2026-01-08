@@ -4,7 +4,7 @@ import { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'About - Settings',
-  description: 'Version information and details about NameTag',
+  description: 'Version information and details about Nametag',
 };
 
 export default function AboutPage() {
@@ -17,7 +17,7 @@ export default function AboutPage() {
       {/* App Information */}
       <div className="bg-surface shadow rounded-lg p-6">
         <h2 className="text-xl font-bold text-foreground mb-4">
-          About NameTag
+          About Nametag
         </h2>
 
         <div className="space-y-4">
@@ -100,7 +100,7 @@ export default function AboutPage() {
         </h3>
 
         <p className="text-sm text-muted mb-4">
-          NameTag is open source software licensed under AGPL-3.0. This means you can:
+          Nametag is open source software licensed under AGPL-3.0. This means you can:
         </p>
 
         <ul className="space-y-2 text-sm text-muted">
@@ -190,7 +190,7 @@ export default function AboutPage() {
 
           <div className="space-y-4">
             <p className="text-sm text-muted">
-              If you find NameTag useful and want to support its development, you can buy me a coffee! ☕
+              If you find Nametag useful and want to support its development, you can buy me a coffee! ☕
             </p>
 
             <a

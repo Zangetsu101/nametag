@@ -1,6 +1,6 @@
 # Semantic Versioning Guide
 
-NameTag follows [Semantic Versioning 2.0.0](https://semver.org/).
+Nametag follows [Semantic Versioning 2.0.0](https://semver.org/).
 
 ## Version Format
 

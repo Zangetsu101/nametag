@@ -27,7 +27,7 @@ export default async function AppearanceSettingsPage() {
           Theme
         </h2>
         <p className="text-muted mb-6">
-          Choose how NameTag looks to you.
+          Choose how Nametag looks to you.
         </p>
         <ThemeToggle userId={session.user.id} currentTheme={currentTheme} />
       </div>

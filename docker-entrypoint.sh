@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-echo "🚀 Starting NameTag initialization..."
+echo "🚀 Starting Nametag initialization..."
 
 # Function to check if database is ready
 wait_for_db() {

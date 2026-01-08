@@ -1,6 +1,6 @@
-# Contributing to NameTag
+# Contributing to Nametag
 
-Thanks for your interest in contributing! This guide will help you get set up and understand how to work on NameTag.
+Thanks for your interest in contributing! This guide will help you get set up and understand how to work on Nametag.
 
 ## Development Setup
 

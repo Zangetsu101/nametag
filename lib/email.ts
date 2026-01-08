@@ -23,9 +23,9 @@ const COLORS = {
 
 // Different from addresses for different email types
 export const fromAddresses = {
-  accounts: `NameTag Accounts <accounts@${EMAIL_DOMAIN}>`,
-  reminders: `NameTag Reminders <reminders@${EMAIL_DOMAIN}>`,
-  default: `NameTag <hello@${EMAIL_DOMAIN}>`,
+  accounts: `Nametag Accounts <accounts@${EMAIL_DOMAIN}>`,
+  reminders: `Nametag Reminders <reminders@${EMAIL_DOMAIN}>`,
+  default: `Nametag <hello@${EMAIL_DOMAIN}>`,
 };
 
 export type SendEmailOptions = {
@@ -69,7 +69,7 @@ function wrapInTemplate(content: string): string {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>NameTag</title>
+  <title>Nametag</title>
   <!--[if mso]>
   <noscript>
     <xml>
@@ -88,7 +88,7 @@ function wrapInTemplate(content: string): string {
           <!-- Header with Logo -->
           <tr>
             <td align="center" style="padding: 32px 40px 24px; border-bottom: 1px solid ${COLORS.border};">
-              <img src="${APP_URL}/logo.png" alt="NameTag" width="120" style="display: block; max-width: 120px; height: auto;">
+              <img src="${APP_URL}/logo.png" alt="Nametag" width="120" style="display: block; max-width: 120px; height: auto;">
             </td>
           </tr>
           <!-- Content -->
@@ -103,14 +103,14 @@ function wrapInTemplate(content: string): string {
               <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
                 <tr>
                   <td align="center" style="padding-bottom: 16px;">
-                    <a href="${APP_URL}" style="color: ${COLORS.primary}; text-decoration: none; font-size: 14px; font-weight: 500;">Visit NameTag</a>
+                    <a href="${APP_URL}" style="color: ${COLORS.primary}; text-decoration: none; font-size: 14px; font-weight: 500;">Visit Nametag</a>
                   </td>
                 </tr>
                 <tr>
                   <td align="center">
                     <p style="margin: 0; color: ${COLORS.textLight}; font-size: 12px; line-height: 1.5;">
-                      You're receiving this email because you have an account at NameTag.<br>
-                      &copy; ${new Date().getFullYear()} NameTag. All rights reserved.
+                      You're receiving this email because you have an account at Nametag.<br>
+                      &copy; ${new Date().getFullYear()} Nametag. All rights reserved.
                     </p>
                   </td>
                 </tr>
@@ -204,14 +204,14 @@ function emailNote(text: string): string {
 // Email template helpers for common use cases
 export const emailTemplates = {
   accountVerification: (verificationUrl: string) => ({
-    subject: "Verify your NameTag account",
+    subject: "Verify your Nametag account",
     html: wrapInTemplate(`
-      ${emailHeading("Welcome to NameTag!")}
+      ${emailHeading("Welcome to Nametag!")}
       ${emailParagraph("Thanks for signing up! Please verify your email address to get started with managing your relationships.")}
       ${emailButton(verificationUrl, "Verify Email Address")}
       ${emailNote("If you didn't create an account, you can safely ignore this email.")}
     `),
-    text: `Welcome to NameTag! Please verify your email by visiting: ${verificationUrl}`,
+    text: `Welcome to Nametag! Please verify your email by visiting: ${verificationUrl}`,
   }),
 
   importantDateReminder: (personName: string, eventType: string, date: string) => ({
@@ -220,7 +220,7 @@ export const emailTemplates = {
       ${emailHeading("Upcoming Event Reminder")}
       ${emailInfoBox(`<strong>${escapeHtml(personName)}</strong>'s ${escapeHtml(eventType)} is on <strong>${escapeHtml(date)}</strong>.`, 'info')}
       ${emailParagraph("Don't forget to reach out and make their day special!")}
-      ${emailButton(`${APP_URL}/dashboard`, "Open NameTag")}
+      ${emailButton(`${APP_URL}/dashboard`, "Open Nametag")}
     `),
     text: `Reminder: ${personName}'s ${eventType} is on ${date}. Don't forget to reach out!`,
   }),
@@ -232,13 +232,13 @@ export const emailTemplates = {
       ${emailParagraph(`It's been a while since you last contacted <strong>${escapeHtml(personName)}</strong>${lastContactDate ? ` (last contact: ${escapeHtml(lastContactDate)})` : ''}.`)}
       ${emailInfoBox(`You asked to be reminded to catch up after ${escapeHtml(interval)} of your last contact.`, 'info')}
       ${emailParagraph("Why not reach out today? A simple message can brighten someone's day.")}
-      ${emailButton(`${APP_URL}/dashboard`, "Open NameTag")}
+      ${emailButton(`${APP_URL}/dashboard`, "Open Nametag")}
     `),
     text: `Time to catch up with ${personName}!${lastContactDate ? ` Last contact: ${lastContactDate}.` : ''} You asked to be reminded to catch up after ${interval} of your last contact. Why not reach out today?`,
   }),
 
   passwordReset: (resetUrl: string) => ({
-    subject: "Reset your NameTag password",
+    subject: "Reset your Nametag password",
     html: wrapInTemplate(`
       ${emailHeading("Password Reset Request")}
       ${emailParagraph("We received a request to reset your password. Click the button below to set a new password:")}
@@ -250,10 +250,10 @@ export const emailTemplates = {
   }),
 
   subscriptionCreated: (tierName: string, price: string, frequency: string) => ({
-    subject: `Welcome to NameTag ${tierName}!`,
+    subject: `Welcome to Nametag ${tierName}!`,
     html: wrapInTemplate(`
-      ${emailHeading(`Welcome to NameTag ${escapeHtml(tierName)}!`)}
-      ${emailParagraph("Thank you for subscribing to NameTag. Your subscription is now active and you have access to all the features included in your plan.")}
+      ${emailHeading(`Welcome to Nametag ${escapeHtml(tierName)}!`)}
+      ${emailParagraph("Thank you for subscribing to Nametag. Your subscription is now active and you have access to all the features included in your plan.")}
       ${emailHeading("Subscription Details", 2)}
       ${emailList([
         `<strong>Plan:</strong> ${escapeHtml(tierName)}`,
@@ -263,17 +263,17 @@ export const emailTemplates = {
       ${emailButton(`${APP_URL}/dashboard`, "Go to Dashboard")}
       ${emailNote("If you have any questions, feel free to reach out to our support team.")}
     `),
-    text: `Welcome to NameTag ${tierName}!\n\nThank you for subscribing to NameTag. Your subscription is now active.\n\nSubscription Details:\n- Plan: ${tierName}\n- Price: ${price} (${frequency})\n\nYou now have access to all the features included in your plan. Start managing your relationships more effectively today!\n\nIf you have any questions, feel free to reach out to our support team.`,
+    text: `Welcome to Nametag ${tierName}!\n\nThank you for subscribing to Nametag. Your subscription is now active.\n\nSubscription Details:\n- Plan: ${tierName}\n- Price: ${price} (${frequency})\n\nYou now have access to all the features included in your plan. Start managing your relationships more effectively today!\n\nIf you have any questions, feel free to reach out to our support team.`,
   }),
 
   subscriptionChanged: (oldTierName: string, newTierName: string, price: string, frequency: string, isUpgrade: boolean) => ({
     subject: isUpgrade
-      ? "Your NameTag subscription has been upgraded"
-      : "Your NameTag subscription has been changed",
+      ? "Your Nametag subscription has been upgraded"
+      : "Your Nametag subscription has been changed",
     html: wrapInTemplate(isUpgrade
       ? `
         ${emailHeading("Subscription Upgraded")}
-        ${emailParagraph("Your NameTag subscription has been successfully upgraded.")}
+        ${emailParagraph("Your Nametag subscription has been successfully upgraded.")}
         ${emailHeading("Upgrade Details", 2)}
         ${emailList([
           `<strong>Previous plan:</strong> ${escapeHtml(oldTierName)}`,
@@ -285,7 +285,7 @@ export const emailTemplates = {
       `
       : `
         ${emailHeading("Subscription Changed")}
-        ${emailParagraph("Your NameTag subscription has been changed.")}
+        ${emailParagraph("Your Nametag subscription has been changed.")}
         ${emailHeading("Plan Details", 2)}
         ${emailList([
           `<strong>Previous plan:</strong> ${escapeHtml(oldTierName)}`,
@@ -297,23 +297,23 @@ export const emailTemplates = {
       `
     ),
     text: isUpgrade
-      ? `Subscription Upgraded\n\nYour NameTag subscription has been successfully upgraded.\n\nUpgrade Details:\n- Previous plan: ${oldTierName}\n- New plan: ${newTierName}\n- New price: ${price} (${frequency})\n\nYour new plan features are now available. Enjoy the expanded limits and capabilities!`
-      : `Subscription Changed\n\nYour NameTag subscription has been changed.\n\nPlan Details:\n- Previous plan: ${oldTierName}\n- New plan: ${newTierName}\n- New price: ${price} (${frequency})\n\nYour plan has been updated. You now have access to all ${newTierName} features.`,
+      ? `Subscription Upgraded\n\nYour Nametag subscription has been successfully upgraded.\n\nUpgrade Details:\n- Previous plan: ${oldTierName}\n- New plan: ${newTierName}\n- New price: ${price} (${frequency})\n\nYour new plan features are now available. Enjoy the expanded limits and capabilities!`
+      : `Subscription Changed\n\nYour Nametag subscription has been changed.\n\nPlan Details:\n- Previous plan: ${oldTierName}\n- New plan: ${newTierName}\n- New price: ${price} (${frequency})\n\nYour plan has been updated. You now have access to all ${newTierName} features.`,
   }),
 
   subscriptionCanceled: (tierName: string, accessUntil: string | null, immediately: boolean) => ({
-    subject: "Your NameTag subscription has been canceled",
+    subject: "Your Nametag subscription has been canceled",
     html: wrapInTemplate(immediately || !accessUntil
       ? `
         ${emailHeading("Subscription Canceled")}
-        ${emailParagraph(`Your NameTag ${escapeHtml(tierName)} subscription has been canceled and your account has been downgraded to the Free plan.`)}
-        ${emailParagraph("You can continue using NameTag with the Free plan features. If you'd like to resubscribe at any time, visit your billing settings.")}
+        ${emailParagraph(`Your Nametag ${escapeHtml(tierName)} subscription has been canceled and your account has been downgraded to the Free plan.`)}
+        ${emailParagraph("You can continue using Nametag with the Free plan features. If you'd like to resubscribe at any time, visit your billing settings.")}
         ${emailButton(`${APP_URL}/settings/billing`, "View Billing Settings")}
         ${emailNote("We're sorry to see you go. If you have any feedback about your experience, we'd love to hear from you.")}
       `
       : `
         ${emailHeading("Subscription Canceled")}
-        ${emailParagraph(`Your NameTag ${escapeHtml(tierName)} subscription has been canceled.`)}
+        ${emailParagraph(`Your Nametag ${escapeHtml(tierName)} subscription has been canceled.`)}
         ${emailInfoBox(`<strong>Good news:</strong> You'll continue to have access to all ${escapeHtml(tierName)} features until <strong>${escapeHtml(accessUntil)}</strong>.`, 'info')}
         ${emailParagraph("After this date, your account will be downgraded to the Free plan. You can resubscribe at any time from your billing settings.")}
         ${emailButton(`${APP_URL}/settings/billing`, "View Billing Settings")}
@@ -321,7 +321,7 @@ export const emailTemplates = {
       `
     ),
     text: immediately || !accessUntil
-      ? `Subscription Canceled\n\nYour NameTag ${tierName} subscription has been canceled and your account has been downgraded to the Free plan.\n\nYou can continue using NameTag with the Free plan features. If you'd like to resubscribe at any time, visit your billing settings.\n\nWe're sorry to see you go. If you have any feedback about your experience, we'd love to hear from you.`
-      : `Subscription Canceled\n\nYour NameTag ${tierName} subscription has been canceled.\n\nGood news: You'll continue to have access to all ${tierName} features until ${accessUntil}.\n\nAfter this date, your account will be downgraded to the Free plan. You can resubscribe at any time from your billing settings.\n\nWe're sorry to see you go. If you have any feedback about your experience, we'd love to hear from you.`,
+      ? `Subscription Canceled\n\nYour Nametag ${tierName} subscription has been canceled and your account has been downgraded to the Free plan.\n\nYou can continue using Nametag with the Free plan features. If you'd like to resubscribe at any time, visit your billing settings.\n\nWe're sorry to see you go. If you have any feedback about your experience, we'd love to hear from you.`
+      : `Subscription Canceled\n\nYour Nametag ${tierName} subscription has been canceled.\n\nGood news: You'll continue to have access to all ${tierName} features until ${accessUntil}.\n\nAfter this date, your account will be downgraded to the Free plan. You can resubscribe at any time from your billing settings.\n\nWe're sorry to see you go. If you have any feedback about your experience, we'd love to hear from you.`,
   }),
 };

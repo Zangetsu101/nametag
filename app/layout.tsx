@@ -10,7 +10,7 @@ import "./globals.css";
 // This is more performant and doesn't require external requests during build time
 
 export const metadata: Metadata = {
-  title: "NameTag - Personal Relationships Manager",
+  title: "Nametag - Personal Relationships Manager",
   description: "Manage your relationships, track important details, and visualize your network",
 };
 

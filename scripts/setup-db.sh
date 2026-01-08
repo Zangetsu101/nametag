@@ -4,7 +4,7 @@
 
 CONTAINER_NAME="nametag-app"
 
-echo "🚀 Setting up NameTag database..."
+echo "🚀 Setting up Nametag database..."
 echo ""
 
 # Check if container is running

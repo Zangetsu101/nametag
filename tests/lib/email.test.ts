@@ -41,7 +41,7 @@ describe('email', () => {
       expect(result.success).toBe(true);
       expect(result.id).toBe('email-123');
       expect(mockSend).toHaveBeenCalledWith({
-        from: 'NameTag <hello@test.example.com>',
+        from: 'Nametag <hello@test.example.com>',
         to: 'recipient@example.com',
         subject: 'Test Subject',
         html: '<p>Test content</p>',
@@ -81,7 +81,7 @@ describe('email', () => {
 
       expect(mockSend).toHaveBeenCalledWith(
         expect.objectContaining({
-          from: 'NameTag Accounts <accounts@test.example.com>',
+          from: 'Nametag Accounts <accounts@test.example.com>',
         })
       );
     });
@@ -100,7 +100,7 @@ describe('email', () => {
 
       expect(mockSend).toHaveBeenCalledWith(
         expect.objectContaining({
-          from: 'NameTag Reminders <reminders@test.example.com>',
+          from: 'Nametag Reminders <reminders@test.example.com>',
         })
       );
     });
@@ -162,8 +162,8 @@ describe('email', () => {
 
         const template = emailTemplates.accountVerification('https://example.com/verify?token=abc');
 
-        expect(template.subject).toBe('Verify your NameTag account');
-        expect(template.html).toContain('Welcome to NameTag');
+        expect(template.subject).toBe('Verify your Nametag account');
+        expect(template.html).toContain('Welcome to Nametag');
         expect(template.html).toContain('https://example.com/verify?token=abc');
         expect(template.text).toContain('https://example.com/verify?token=abc');
       });
@@ -214,7 +214,7 @@ describe('email', () => {
 
         const template = emailTemplates.passwordReset('https://example.com/reset?token=xyz');
 
-        expect(template.subject).toBe('Reset your NameTag password');
+        expect(template.subject).toBe('Reset your Nametag password');
         expect(template.html).toContain('Password Reset');
         expect(template.html).toContain('https://example.com/reset?token=xyz');
         expect(template.html).toContain('1 hour');
@@ -227,9 +227,9 @@ describe('email', () => {
     it('should have correct from addresses', async () => {
       const { fromAddresses } = await import('../../lib/email');
 
-      expect(fromAddresses.accounts).toBe('NameTag Accounts <accounts@test.example.com>');
-      expect(fromAddresses.reminders).toBe('NameTag Reminders <reminders@test.example.com>');
-      expect(fromAddresses.default).toBe('NameTag <hello@test.example.com>');
+      expect(fromAddresses.accounts).toBe('Nametag Accounts <accounts@test.example.com>');
+      expect(fromAddresses.reminders).toBe('Nametag Reminders <reminders@test.example.com>');
+      expect(fromAddresses.default).toBe('Nametag <hello@test.example.com>');
     });
   });
 });

@@ -1,4 +1,4 @@
-# Production Dockerfile for NameTag
+# Production Dockerfile for Nametag
 # Multi-stage build for optimized production image
 
 # Stage 1: Dependencies

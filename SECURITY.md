@@ -27,4 +27,4 @@ After receiving a report, we aim to:
 - Provide an initial assessment and next steps within **7 days**
 - Coordinate a fix and release, and provide credit if desired
 
-Thanks for helping keep NameTag and its users safe.
+Thanks for helping keep Nametag and its users safe.

@@ -1,19 +1,19 @@
-# NameTag
+# Nametag
 
 [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](LICENSE)
 
-NameTag is a personal relationships manager that helps you remember the people in your life and hoy they're connected. Track birthdays, contact information, how people are connected, and visualize your network as an interactive graph.
+Nametag is a personal relationships manager that helps you remember the people in your life and hoy they're connected. Track birthdays, contact information, how people are connected, and visualize your network as an interactive graph.
 
 ![Dashboard](docs/screenshots/sc1.png)
 *Dashboard with network overview and statistics*
 
 **[Try the hosted version →](https://nametag.one)**
 
-## Why NameTag?
+## Why Nametag?
 
 We all have hundreds of contacts scattered across social media, phone books, and email. But can you remember when you last talked to an old friend? Their kids' names? Their birthday?
 
-NameTag solves this by giving you a single place to manage your personal network. It's like a CRM, but for your actual relationships instead of sales prospects.
+Nametag solves this by giving you a single place to manage your personal network. It's like a CRM, but for your actual relationships instead of sales prospects.
 
 ## Screenshots
 
@@ -51,7 +51,7 @@ NameTag solves this by giving you a single place to manage your personal network
 
 **Hosted Service**: We offer a hosted version at [nametag.one](https://nametag.one) with a generous free tier (50 people) and affordable paid plans starting at $1/month. The hosted service helps fund development and maintenance of the open source project.
 
-**Self-Hosting**: You can also run NameTag on your own infrastructure for free with these benefits:
+**Self-Hosting**: You can also run Nametag on your own infrastructure for free with these benefits:
 - No account limits - store unlimited contacts
 - No email service required - accounts are auto-verified
 - Complete data ownership and privacy
@@ -63,7 +63,7 @@ This guide covers self-hosting setup.
 
 ### Quick Start
 
-1. Create a directory for NameTag:
+1. Create a directory for Nametag:
 ```bash
 mkdir nametag && cd nametag
 ```
@@ -157,7 +157,7 @@ docker-compose up -d
 
 The database will be automatically set up on first run.
 
-5. Access NameTag at `http://localhost:3000`
+5. Access Nametag at `http://localhost:3000`
 
 ### Environment Variables
 
@@ -184,7 +184,7 @@ The database will be automatically set up on first run.
 
 ### Email Setup (Optional)
 
-Email configuration is **optional for self-hosted instances**. NameTag works perfectly without it:
+Email configuration is **optional for self-hosted instances**. Nametag works perfectly without it:
 
 - **Without email**: New accounts are automatically verified and users can log in immediately. Password resets and contact reminders are unavailable.
 - **With email**: Enables password reset functionality and contact reminder emails via [Resend](https://resend.com).
@@ -244,7 +244,7 @@ We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for deve
 
 ## License
 
-Licensed under the [GNU Affero General Public License v3.0](LICENSE). This ensures that if you modify and deploy NameTag, you must make your source code available.
+Licensed under the [GNU Affero General Public License v3.0](LICENSE). This ensures that if you modify and deploy Nametag, you must make your source code available.
 
 ## Support
 
@@ -254,7 +254,7 @@ Licensed under the [GNU Affero General Public License v3.0](LICENSE). This ensur
 
 ## Support Development
 
-If you find NameTag useful and want to support its development, you can buy me a coffee! ☕
+If you find Nametag useful and want to support its development, you can buy me a coffee! ☕
 
 <a href="https://www.buymeacoffee.com/mattogodoy" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
 
