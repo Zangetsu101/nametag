@@ -177,7 +177,7 @@ export default function PillSelector<T extends PillItem>({
           style={{ backgroundColor: item.color }}
         />
       )}
-      <span className="text-gray-900 dark:text-white">{item.label}</span>
+      <span className="text-foreground">{item.label}</span>
     </>
   );
 
@@ -320,7 +320,7 @@ export default function PillSelector<T extends PillItem>({
       )}
 
       {helpText && (
-        <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+        <p className="mt-1 text-xs text-muted">
           {helpText}
         </p>
       )}

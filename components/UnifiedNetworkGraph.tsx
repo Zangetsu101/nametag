@@ -546,14 +546,14 @@ export default function UnifiedNetworkGraph({
             onClick={() => setClusteringEnabled(!clusteringEnabled)}
             className={`p-2.5 border-2 rounded-lg shadow-lg hover:scale-105 active:scale-95 transition-all ${
               clusteringEnabled
-                ? 'bg-primary border-primary text-black hover:bg-primary-dark shadow-primary/50'
-                : 'bg-surface border-border text-foreground hover:bg-surface-elevated hover:border-primary/50'
+                ? 'bg-primary border-primary hover:bg-primary-dark shadow-primary/50'
+                : 'bg-surface border-border hover:bg-surface-elevated hover:border-primary/50'
             }`}
             aria-label="Cluster by group"
             title="Cluster by group"
           >
             <svg
-              className="w-5 h-5"
+              className="w-5 h-5 text-foreground dark:text-white"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -573,7 +573,7 @@ export default function UnifiedNetworkGraph({
             title="Re-center graph"
           >
             <svg
-              className="w-5 h-5 text-secondary"
+              className="w-5 h-5 text-foreground dark:text-white"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"

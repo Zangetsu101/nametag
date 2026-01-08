@@ -4,8 +4,15 @@
 /* Enable class-based dark mode */
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* PALETTE A — Cool Contrast Blue */
 :root {
-  /* Light mode colors - Cool Contrast Blue theme */
+  --a-primary: #1E63FF;
+  --a-secondary: #6DA8FF;
+  --a-text: #1B1D21;
+  --a-bg: #F6F7F9;
+  --a-surface: #FFFFFF;
+
+  /* Legacy variables for compatibility */
   --background: #F6F7F9;
   --foreground: #1B1D21;
   --surface: #FFFFFF;
@@ -20,7 +27,13 @@
 }
 
 .dark {
-  /* Dark mode colors - Cool Contrast Blue theme */
+  --a-primary: #5C82FF;
+  --a-secondary: #2C3E9F;
+  --a-text: #E7EAF0;
+  --a-bg: #0B0C10;
+  --a-surface: #15171D;
+
+  /* Legacy variables for compatibility */
   --background: #0B0C10;
   --foreground: #E7EAF0;
   --surface: #15171D;
@@ -35,6 +48,14 @@
 }
 
 @theme inline {
+  /* New palette A colors */
+  --color-a-primary: var(--a-primary);
+  --color-a-secondary: var(--a-secondary);
+  --color-a-text: var(--a-text);
+  --color-a-bg: var(--a-bg);
+  --color-a-surface: var(--a-surface);
+
+  /* Legacy colors */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-surface: var(--surface);
