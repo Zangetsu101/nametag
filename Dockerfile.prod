@@ -69,6 +69,7 @@ COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 # This saves ~30-40 MB compared to npm install
 COPY --from=builder /app/node_modules/.bin/prisma ./node_modules/.bin/prisma
 COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
+COPY --from=builder /app/node_modules/@prisma/engines ./node_modules/@prisma/engines
 
 # Copy Prisma generated client from builder (already built)
 COPY --from=builder /app/node_modules/.prisma/ ./node_modules/.prisma/
