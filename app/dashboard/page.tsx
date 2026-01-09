@@ -218,13 +218,9 @@ export default async function DashboardPage() {
                     className="flex items-center justify-between p-4 bg-surface-elevated hover:bg-surface-elevated/80 rounded-lg transition-all border-2 border-border hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10 relative group"
                   >
                     <div className="flex items-center gap-4">
-                      <div className={`p-3 rounded-lg shadow-lg ${
-                        event.type === 'important_date'
-                          ? 'bg-secondary/30 shadow-secondary/20'
-                          : 'bg-primary/30 shadow-primary/20'
-                      }`}>
+                      <div className="p-3 rounded-lg shadow-lg bg-primary/30 shadow-primary/20">
                         {event.type === 'important_date' ? (
-                          <svg className="w-5 h-5 text-secondary drop-shadow-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-5 h-5 text-primary drop-shadow-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                           </svg>
                         ) : (
