@@ -6,24 +6,41 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
-## [0.8.0](https://github.com/mattogodoy/nametag/compare/v0.7.1...v0.8.0) (2026-01-09)
+## [0.9.0](https://github.com/mattogodoy/nametag/compare/v0.8.0...v0.9.0) (2026-01-09)
 
 ### Features
 
-* Ability to select which groups to import ([af6a6b0](https://github.com/mattogodoy/nametag/commit/af6a6b084378afaa9faa19e691fea7b8a83f28be))
+* Added localization to the app. English and Spanish now supported ([6c26d80](https://github.com/mattogodoy/nametag/commit/6c26d80fb970cbddd964dc77fa9638aa8fc29bd3))
 
 ### Bug Fixes
 
-* Defined types and removed unused variables ([aecc4ee](https://github.com/mattogodoy/nametag/commit/aecc4eeee4b5ea1e62084ff9129358a9a12835a9))
+* Added many missing translations and small fixes ([34d4952](https://github.com/mattogodoy/nametag/commit/34d4952a23af4c1b0a315bc2567b1848cf57cf6c))
+* Fix app loading ([0ea9588](https://github.com/mattogodoy/nametag/commit/0ea95881843a275681a344aac9aa686eb57224ea))
+* Fixed duplicate ImportData interface ([161d351](https://github.com/mattogodoy/nametag/commit/161d3516c125c27aad5c2fb131217bb4aeb07fac))
+* Some linting errors and warnings ([0875a64](https://github.com/mattogodoy/nametag/commit/0875a64321b1f4036d3cab4eab26c87e382d6875))
 
 ### Changelog
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.9.0](https://github.com/mattogodoy/nametag/compare/v0.8.0...v0.9.0)
+
+- Added internationalization to the entire app [`#3`](https://github.com/mattogodoy/nametag/pull/3)
+- ✨ Feature: Added localization to the app. English and Spanish now supported [`6c26d80`](https://github.com/mattogodoy/nametag/commit/6c26d80fb970cbddd964dc77fa9638aa8fc29bd3)
+- 🐛 Fix: Added many missing translations and small fixes [`34d4952`](https://github.com/mattogodoy/nametag/commit/34d4952a23af4c1b0a315bc2567b1848cf57cf6c)
+- Added documentation [`3d376ed`](https://github.com/mattogodoy/nametag/commit/3d376edc281ba4494aab5cd7d56b369792f99d25)
+- 🐛 Fix: Fix app loading [`0ea9588`](https://github.com/mattogodoy/nametag/commit/0ea95881843a275681a344aac9aa686eb57224ea)
+- 🐛 Fix: Some linting errors and warnings [`0875a64`](https://github.com/mattogodoy/nametag/commit/0875a64321b1f4036d3cab4eab26c87e382d6875)
+- 🐛 Fix: Fixed duplicate ImportData interface [`161d351`](https://github.com/mattogodoy/nametag/commit/161d3516c125c27aad5c2fb131217bb4aeb07fac)
+- 🔧 Chore: Change icon [`0f57d76`](https://github.com/mattogodoy/nametag/commit/0f57d7640a428cddfaa0d080bd06c3bd26d6f1fd)
+
 #### [v0.8.0](https://github.com/mattogodoy/nametag/compare/v0.7.1...v0.8.0)
+
+> 9 January 2026
 
 - ✨ Feature: Ability to select which groups to import [`af6a6b0`](https://github.com/mattogodoy/nametag/commit/af6a6b084378afaa9faa19e691fea7b8a83f28be)
 - 🐛 Fix: Defined types and removed unused variables [`aecc4ee`](https://github.com/mattogodoy/nametag/commit/aecc4eeee4b5ea1e62084ff9129358a9a12835a9)
+- 🔧 Chore: release v0.8.0 [`7fd7b61`](https://github.com/mattogodoy/nametag/commit/7fd7b617b7185e93f106cde23336eacf60b7ee3a)
 - 🔧 Chore: Type declaration [`1a5def1`](https://github.com/mattogodoy/nametag/commit/1a5def1c94d534973ad02e0d96abe436832ed1f3)
 
 #### [v0.7.1](https://github.com/mattogodoy/nametag/compare/v0.7.0...v0.7.1)
