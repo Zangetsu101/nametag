@@ -6,24 +6,32 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
-## [0.9.0](https://github.com/mattogodoy/nametag/compare/v0.8.0...v0.9.0) (2026-01-09)
+## [0.10.0](https://github.com/mattogodoy/nametag/compare/v0.9.0...v0.10.0) (2026-01-09)
 
 ### Features
 
-* Added localization to the app. English and Spanish now supported ([6c26d80](https://github.com/mattogodoy/nametag/commit/6c26d80fb970cbddd964dc77fa9638aa8fc29bd3))
+* Enable cross-subdomain language cookie sharing ([f0399c9](https://github.com/mattogodoy/nametag/commit/f0399c95734aebfaf1f064ae903828b383f38f26))
 
 ### Bug Fixes
 
-* Added many missing translations and small fixes ([34d4952](https://github.com/mattogodoy/nametag/commit/34d4952a23af4c1b0a315bc2567b1848cf57cf6c))
-* Fix app loading ([0ea9588](https://github.com/mattogodoy/nametag/commit/0ea95881843a275681a344aac9aa686eb57224ea))
-* Fixed duplicate ImportData interface ([161d351](https://github.com/mattogodoy/nametag/commit/161d3516c125c27aad5c2fb131217bb4aeb07fac))
-* Some linting errors and warnings ([0875a64](https://github.com/mattogodoy/nametag/commit/0875a64321b1f4036d3cab4eab26c87e382d6875))
+* Meaningless change to trigger GitHub build ([a1fcf69](https://github.com/mattogodoy/nametag/commit/a1fcf69c2d47c561fba57553f3740b45b2d414bc))
+* Replace any type with explicit cookie options type ([074798d](https://github.com/mattogodoy/nametag/commit/074798d8dcb108a9151cf3f827e56a5abcb2f918))
 
 ### Changelog
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.10.0](https://github.com/mattogodoy/nametag/compare/v0.9.0...v0.10.0)
+
+- 🐛 Fix: Replace any type with explicit cookie options type [`074798d`](https://github.com/mattogodoy/nametag/commit/074798d8dcb108a9151cf3f827e56a5abcb2f918)
+- ✨ Feature: Enable cross-subdomain language cookie sharing [`f0399c9`](https://github.com/mattogodoy/nametag/commit/f0399c95734aebfaf1f064ae903828b383f38f26)
+- Added cross-site cookies for language [`b705b59`](https://github.com/mattogodoy/nametag/commit/b705b593321b8d5608fe68c7838f9e23985ec237)
+- 🐛 Fix: Meaningless change to trigger GitHub build [`a1fcf69`](https://github.com/mattogodoy/nametag/commit/a1fcf69c2d47c561fba57553f3740b45b2d414bc)
+- 🔧 Chore: Meaningless change to trigger GitHub build [`0d1d892`](https://github.com/mattogodoy/nametag/commit/0d1d892fc2a71ab01c909a0b367179f45c4d2430)
+
 #### [v0.9.0](https://github.com/mattogodoy/nametag/compare/v0.8.0...v0.9.0)
+
+> 9 January 2026
 
 - Added internationalization to the entire app [`#3`](https://github.com/mattogodoy/nametag/pull/3)
 - ✨ Feature: Added localization to the app. English and Spanish now supported [`6c26d80`](https://github.com/mattogodoy/nametag/commit/6c26d80fb970cbddd964dc77fa9638aa8fc29bd3)
@@ -31,6 +39,7 @@ All notable changes to this project will be documented in this file. Dates are d
 - Added documentation [`3d376ed`](https://github.com/mattogodoy/nametag/commit/3d376edc281ba4494aab5cd7d56b369792f99d25)
 - 🐛 Fix: Fix app loading [`0ea9588`](https://github.com/mattogodoy/nametag/commit/0ea95881843a275681a344aac9aa686eb57224ea)
 - 🐛 Fix: Some linting errors and warnings [`0875a64`](https://github.com/mattogodoy/nametag/commit/0875a64321b1f4036d3cab4eab26c87e382d6875)
+- 🔧 Chore: release v0.9.0 [`4bda013`](https://github.com/mattogodoy/nametag/commit/4bda013e17d9def45d56c913f94c75546c4ccb93)
 - 🐛 Fix: Fixed duplicate ImportData interface [`161d351`](https://github.com/mattogodoy/nametag/commit/161d3516c125c27aad5c2fb131217bb4aeb07fac)
 - 🔧 Chore: Change icon [`0f57d76`](https://github.com/mattogodoy/nametag/commit/0f57d7640a428cddfaa0d080bd06c3bd26d6f1fd)
 
