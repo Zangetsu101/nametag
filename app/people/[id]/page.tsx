@@ -10,8 +10,12 @@ import Navigation from '@/components/Navigation';
 import { formatDate } from '@/lib/date-format';
 import { formatFullName } from '@/lib/nameUtils';
 import MarkdownRenderer from '@/components/MarkdownRenderer';
+import { getTranslations } from 'next-intl/server';
 
-function getYearsAgo(date: Date): string | null {
+// Type for translation function
+type TranslationFn = (key: string, values?: Record<string, string | number | Date>) => string;
+
+function getYearsAgo(date: Date, t: TranslationFn): string | null {
   const now = new Date();
   if (date >= now) return null; // Future date, don't show anything
 
@@ -23,56 +27,65 @@ function getYearsAgo(date: Date): string | null {
   const adjustedYears = (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) ? years - 1 : years;
 
   if (adjustedYears < 1) return null;
-  return `${adjustedYears} ${adjustedYears === 1 ? 'year' : 'years'} ago`;
+  const unit = adjustedYears === 1 ? t('year') : t('years');
+  return `${adjustedYears} ${unit} ${t('ago')}`;
 }
 
-function getReminderDescription(date: {
-  reminderEnabled: boolean;
-  reminderType: string | null;
-  reminderInterval: number | null;
-  reminderIntervalUnit: string | null;
-}): string | null {
+function getReminderDescription(
+  date: {
+    reminderEnabled: boolean;
+    reminderType: string | null;
+    reminderInterval: number | null;
+    reminderIntervalUnit: string | null;
+  },
+  t: TranslationFn
+): string | null {
   if (!date.reminderEnabled) return null;
   if (date.reminderType === 'ONCE') {
-    return 'Remind once';
+    return t('remindOnce');
   }
   if (date.reminderType === 'RECURRING' && date.reminderInterval && date.reminderIntervalUnit) {
     const unit = date.reminderIntervalUnit.toLowerCase();
-    return `Remind every ${date.reminderInterval} ${date.reminderInterval === 1 ? unit.slice(0, -1) : unit}`;
+    const unitSingular = date.reminderInterval === 1 ? unit.slice(0, -1) : unit;
+    return t('remindEvery', { interval: date.reminderInterval, unit: unitSingular });
   }
   return null;
 }
 
-function getContactReminderDescription(person: {
-  contactReminderEnabled: boolean;
-  contactReminderInterval: number | null;
-  contactReminderIntervalUnit: string | null;
-}): string | null {
+function getContactReminderDescription(
+  person: {
+    contactReminderEnabled: boolean;
+    contactReminderInterval: number | null;
+    contactReminderIntervalUnit: string | null;
+  },
+  t: TranslationFn
+): string | null {
   if (!person.contactReminderEnabled) return null;
   if (person.contactReminderInterval && person.contactReminderIntervalUnit) {
     const unit = person.contactReminderIntervalUnit.toLowerCase();
-    return `Remind after ${person.contactReminderInterval} ${person.contactReminderInterval === 1 ? unit.slice(0, -1) : unit}`;
+    const unitSingular = person.contactReminderInterval === 1 ? unit.slice(0, -1) : unit;
+    return t('remindAfter', { interval: person.contactReminderInterval, unit: unitSingular });
   }
   return null;
 }
 
-function getRelativeTime(date: Date): string {
+function getRelativeTime(date: Date, t: any): string {
   const now = new Date();
   const diffTime = Math.abs(now.getTime() - date.getTime());
   const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
   if (diffDays === 0) {
-    return 'today';
+    return t('today');
   } else if (diffDays === 1) {
-    return '1 day ago';
+    return t('oneDayAgo');
   } else if (diffDays < 30) {
-    return `${diffDays} days ago`;
+    return t('daysAgo', { days: diffDays });
   } else if (diffDays < 365) {
     const months = Math.floor(diffDays / 30);
-    return months === 1 ? '1 month ago' : `${months} months ago`;
+    return months === 1 ? t('oneMonthAgo') : t('monthsAgo', { months });
   } else {
     const years = Math.floor(diffDays / 365);
-    return years === 1 ? '1 year ago' : `${years} years ago`;
+    return years === 1 ? t('oneYearAgo') : t('yearsAgo', { years });
   }
 }
 
@@ -82,6 +95,8 @@ export default async function PersonDetailsPage({
   params: Promise<{ id: string }>;
 }) {
   const session = await auth();
+  const t = await getTranslations('people');
+  const tCommon = await getTranslations('common');
 
   if (!session?.user) {
     redirect('/login');
@@ -207,7 +222,7 @@ export default async function PersonDetailsPage({
               href="/people"
               className="text-primary hover:underline text-sm"
             >
-              ← Back to People
+              {t('backToPeople')}
             </Link>
           </div>
 
@@ -241,7 +256,7 @@ export default async function PersonDetailsPage({
                   href={`/people/${person.id}/edit`}
                   className="flex-1 sm:flex-none px-4 py-2 bg-primary text-white rounded-lg font-semibold hover:bg-primary-dark transition-colors shadow-lg hover:shadow-primary/50 text-center"
                 >
-                  Edit
+                  {t('edit')}
                 </Link>
                 <DeletePersonButton personId={person.id} personName={formatFullName(person)} />
               </div>
@@ -252,26 +267,26 @@ export default async function PersonDetailsPage({
               {(person.lastContact || person.notes) && (
                 <div className="border border-border rounded-lg p-4">
                   <h3 className="text-lg font-semibold text-foreground mb-4">
-                    Details
+                    {t('details')}
                   </h3>
                   <div className="space-y-4">
                     {person.lastContact && (
                       <div>
                         <h4 className="text-sm font-medium text-muted mb-1">
-                          Last time you talked
+                          {t('lastTimeTalked')}
                         </h4>
                         <p className="text-foreground">
                           {formatDate(new Date(person.lastContact), dateFormat)}{' '}
                           <span className="text-sm text-muted">
-                            ({getRelativeTime(new Date(person.lastContact))})
+                            ({getRelativeTime(new Date(person.lastContact), t)})
                           </span>
                         </p>
-                        {getContactReminderDescription(person) && (
+                        {getContactReminderDescription(person, t) && (
                           <div className="text-xs text-primary mt-1 flex items-center gap-1">
                             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                             </svg>
-                            {getContactReminderDescription(person)}
+                            {getContactReminderDescription(person, t)}
                           </div>
                         )}
                       </div>
@@ -280,7 +295,7 @@ export default async function PersonDetailsPage({
                     {person.notes && (
                       <div>
                         <h4 className="text-sm font-medium text-muted mb-1">
-                          Notes
+                          {t('notes')}
                         </h4>
                         <MarkdownRenderer content={person.notes} />
                       </div>
@@ -293,13 +308,13 @@ export default async function PersonDetailsPage({
               {person.importantDates && person.importantDates.length > 0 && (
                 <div className="border border-border rounded-lg p-4">
                   <h3 className="text-lg font-semibold text-foreground mb-4">
-                    Important Dates
+                    {t('importantDates')}
                   </h3>
                   <div className="space-y-2">
                     {person.importantDates.map((date) => {
-                      const reminderDesc = getReminderDescription(date);
+                      const reminderDesc = getReminderDescription(date, t);
                       const dateObj = new Date(date.date);
-                      const yearsAgo = getYearsAgo(dateObj);
+                      const yearsAgo = getYearsAgo(dateObj, t);
                       return (
                         <div
                           key={date.id}
@@ -332,7 +347,7 @@ export default async function PersonDetailsPage({
               {/* Relationship Network Section */}
               <div className="border border-border rounded-lg p-4">
                 <h3 className="text-lg font-semibold text-foreground mb-4">
-                  Relationship Network
+                  {t('relationshipNetwork')}
                 </h3>
                 <UnifiedNetworkGraph
                   apiEndpoint={`/api/people/${person.id}/graph`}
@@ -343,14 +358,14 @@ export default async function PersonDetailsPage({
                   refreshKey={person.relationshipsFrom.length + (person.relationshipToUserId ? 1000 : 0)}
                 />
                 <p className="text-xs text-muted mt-2">
-                  Click nodes to navigate • Drag to reposition • Scroll to zoom
+                  {t('graphHelp')}
                 </p>
               </div>
 
               {/* Relationships Section */}
               <div className="border border-border rounded-lg p-4">
                 <h3 className="text-lg font-semibold text-foreground mb-4">
-                  Relationships
+                  {t('relationships')}
                 </h3>
 
                 {/* Relationship to user */}
@@ -359,7 +374,7 @@ export default async function PersonDetailsPage({
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <span className="text-foreground font-medium">
-                          You
+                          {t('you')}
                         </span>
                         <span className="text-muted">•</span>
                         <span
@@ -378,7 +393,7 @@ export default async function PersonDetailsPage({
                         <Link
                           href={`/people/${person.id}/edit`}
                           className="text-primary hover:text-primary-dark transition-colors"
-                          title="Edit"
+                          title={t('edit')}
                         >
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />

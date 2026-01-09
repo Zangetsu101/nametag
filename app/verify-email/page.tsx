@@ -3,10 +3,13 @@
 import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 
 type VerificationState = 'loading' | 'success' | 'error' | 'no-token';
 
 function VerifyEmailContent() {
+  const t = useTranslations('auth');
+  const tCommon = useTranslations('common');
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
   // Derive initial state from token to avoid setState in effect
@@ -35,11 +38,11 @@ function VerifyEmailContent() {
           setMessage(data.message);
         } else {
           setState('error');
-          setMessage(data.error || 'Verification failed');
+          setMessage(data.error || t('verificationFailed'));
         }
       } catch {
         setState('error');
-        setMessage('Unable to verify email. Please try again.');
+        setMessage(t('verificationFailed'));
       }
     }
 
@@ -51,7 +54,7 @@ function VerifyEmailContent() {
       {state === 'loading' && (
         <div className="space-y-4">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="text-muted">Verifying your email...</p>
+          <p className="text-muted">{t('verifyingEmail')}</p>
         </div>
       )}
 
@@ -59,7 +62,7 @@ function VerifyEmailContent() {
         <div className="space-y-6">
           <div className="bg-green-50 dark:bg-green-900/20 border border-green-400 dark:border-green-800 rounded-lg p-6">
             <h2 className="text-2xl font-bold text-green-700 dark:text-green-400 mb-4">
-              Email Verified!
+              {t('emailVerifiedTitle')}
             </h2>
             <p className="text-green-600 dark:text-green-300">
               {message}
@@ -69,7 +72,7 @@ function VerifyEmailContent() {
             href="/login"
             className="inline-block w-full py-2 px-4 border border-transparent text-sm font-medium rounded-lg text-black bg-primary hover:bg-primary-dark shadow-lg hover:shadow-primary/50"
           >
-            Go to Login
+            {t('goToLoginButton')}
           </Link>
         </div>
       )}
@@ -78,7 +81,7 @@ function VerifyEmailContent() {
         <div className="space-y-6">
           <div className="bg-red-50 dark:bg-red-900/20 border border-red-400 dark:border-red-800 rounded-lg p-6">
             <h2 className="text-2xl font-bold text-red-700 dark:text-red-400 mb-4">
-              Verification Failed
+              {t('verificationFailedTitle')}
             </h2>
             <p className="text-red-600 dark:text-red-300">
               {message}
@@ -89,13 +92,13 @@ function VerifyEmailContent() {
               href="/register"
               className="inline-block w-full py-2 px-4 border border-transparent text-sm font-medium rounded-lg text-black bg-primary hover:bg-primary-dark shadow-lg hover:shadow-primary/50"
             >
-              Register Again
+              {t('registerAgain')}
             </Link>
             <Link
               href="/login"
               className="inline-block text-blue-600 hover:text-blue-500 dark:text-blue-400"
             >
-              Go to Login
+              {t('goToLoginButton')}
             </Link>
           </div>
         </div>
@@ -105,17 +108,17 @@ function VerifyEmailContent() {
         <div className="space-y-6">
           <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-400 dark:border-yellow-800 rounded-lg p-6">
             <h2 className="text-2xl font-bold text-yellow-700 dark:text-yellow-400 mb-4">
-              No Verification Token
+              {t('noVerificationToken')}
             </h2>
             <p className="text-yellow-600 dark:text-yellow-300">
-              Please use the link from your verification email.
+              {t('useVerificationLink')}
             </p>
           </div>
           <Link
             href="/login"
             className="inline-block text-blue-600 hover:text-blue-500 dark:text-blue-400"
           >
-            Go to Login
+            {t('goToLoginButton')}
           </Link>
         </div>
       )}
@@ -124,11 +127,12 @@ function VerifyEmailContent() {
 }
 
 function LoadingFallback() {
+  const tCommon = useTranslations('common');
   return (
     <div className="max-w-md w-full space-y-8 text-center">
       <div className="space-y-4">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-        <p className="text-muted">Loading...</p>
+        <p className="text-muted">{tCommon('loading')}</p>
       </div>
     </div>
   );

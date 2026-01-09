@@ -2,7 +2,10 @@ import { auth } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import ThemeToggle from '@/components/ThemeToggle';
 import DateFormatSelector from '@/components/DateFormatSelector';
+import LanguageSelector from '@/components/LanguageSelector';
 import { prisma } from '@/lib/prisma';
+import { getUserLocale, type SupportedLocale } from '@/lib/locale';
+import { getTranslations } from 'next-intl/server';
 
 export default async function AppearanceSettingsPage() {
   const session = await auth();
@@ -11,23 +14,27 @@ export default async function AppearanceSettingsPage() {
     redirect('/login');
   }
 
+  // Get translations
+  const t = await getTranslations('settings.appearance');
+
   const user = await prisma.user.findUnique({
     where: { id: session.user.id },
-    select: { theme: true, dateFormat: true },
+    select: { theme: true, dateFormat: true, language: true },
   });
 
   const currentTheme = user?.theme || 'DARK';
   const currentDateFormat = user?.dateFormat || 'MDY';
+  const currentLanguage = (user?.language as SupportedLocale) || (await getUserLocale(session.user.id));
 
   return (
     <div className="space-y-6">
       {/* Theme Settings */}
       <div className="bg-surface shadow rounded-lg p-6">
         <h2 className="text-xl font-bold text-foreground mb-4">
-          Theme
+          {t('themeTitle')}
         </h2>
         <p className="text-muted mb-6">
-          Choose how Nametag looks to you.
+          {t('themeDescription')}
         </p>
         <ThemeToggle userId={session.user.id} currentTheme={currentTheme} />
       </div>
@@ -35,12 +42,20 @@ export default async function AppearanceSettingsPage() {
       {/* Date Format Settings */}
       <div className="bg-surface shadow rounded-lg p-6">
         <h2 className="text-xl font-bold text-foreground mb-4">
-          Date Format
+          {t('dateFormatTitle')}
         </h2>
         <p className="text-muted mb-6">
-          Choose how dates are displayed throughout the app.
+          {t('dateFormatDescription')}
         </p>
         <DateFormatSelector userId={session.user.id} currentFormat={currentDateFormat} />
+      </div>
+
+      {/* Language Settings */}
+      <div className="bg-surface shadow rounded-lg p-6">
+        <h2 className="text-xl font-bold text-foreground mb-4">
+          {t('language.title')}
+        </h2>
+        <LanguageSelector userId={session.user.id} currentLanguage={currentLanguage} />
       </div>
     </div>
   );

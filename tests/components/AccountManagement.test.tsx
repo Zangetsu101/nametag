@@ -24,6 +24,32 @@ vi.mock('sonner', () => ({
   },
 }));
 
+// Mock next-intl
+vi.mock('next-intl', () => ({
+  useTranslations: vi.fn((namespace: string) => (key: string) => {
+    const translations: Record<string, Record<string, string>> = {
+      'settings.account': {
+        'exportData': 'Export Data',
+        'exportEverything': 'Export everything',
+        'exportSpecificGroups': 'Export specific groups',
+        'noDataToExport': 'You don\'t have any data to export yet.',
+        'exportButton': 'Export',
+        'exporting': 'Exporting...',
+        'exportSuccess': 'Data exported successfully!',
+        'exportFailed': 'Failed to export data. Please try again.',
+        'importData': 'Import Data',
+        'importButton': 'Import',
+        'importing': 'Importing...',
+        'deleteAccount': 'Delete Account',
+        'deleteMyAccount': 'Delete My Account',
+        'deleting': 'Deleting...',
+        'cancel': 'Cancel',
+      },
+    };
+    return translations[namespace]?.[key] || key;
+  }),
+}));
+
 describe('AccountManagement - Export Data', () => {
   const mockGroups = [
     { id: 'group-1', name: 'Family', color: '#FF0000' },
@@ -45,7 +71,7 @@ describe('AccountManagement - Export Data', () => {
     it('should disable export button when no people and no groups', () => {
       render(<AccountManagement groups={[]} peopleCount={0} />);
 
-      const exportButton = screen.getByRole('button', { name: /export data/i });
+      const exportButton = screen.getByRole('button', { name: /^export$/i });
       expect(exportButton).toBeDisabled();
     });
 
@@ -59,8 +85,7 @@ describe('AccountManagement - Export Data', () => {
     it('should show helpful message when no data to export', () => {
       render(<AccountManagement groups={[]} peopleCount={0} />);
 
-      expect(screen.getByText(/no data to export/i)).toBeInTheDocument();
-      expect(screen.getByText(/add people or groups first/i)).toBeInTheDocument();
+      expect(screen.getByText(/You don't have any data to export yet/i)).toBeInTheDocument();
     });
 
     it('should disable "Export specific groups" when no groups exist', () => {
@@ -75,14 +100,14 @@ describe('AccountManagement - Export Data', () => {
     it('should enable export button when there are people', () => {
       render(<AccountManagement groups={[]} peopleCount={10} />);
 
-      const exportButton = screen.getByRole('button', { name: /export data/i });
+      const exportButton = screen.getByRole('button', { name: /^export$/i });
       expect(exportButton).not.toBeDisabled();
     });
 
     it('should enable export button when there are groups', () => {
       render(<AccountManagement groups={mockGroups} peopleCount={0} />);
 
-      const exportButton = screen.getByRole('button', { name: /export data/i });
+      const exportButton = screen.getByRole('button', { name: /^export$/i });
       expect(exportButton).not.toBeDisabled();
     });
 
@@ -120,7 +145,7 @@ describe('AccountManagement - Export Data', () => {
       const user = userEvent.setup();
       render(<AccountManagement groups={mockGroups} peopleCount={10} />);
 
-      const exportButton = screen.getByRole('button', { name: /export data/i });
+      const exportButton = screen.getByRole('button', { name: /^export$/i });
       await user.click(exportButton);
 
       await waitFor(() => {
@@ -147,7 +172,7 @@ describe('AccountManagement - Export Data', () => {
       const user = userEvent.setup();
       render(<AccountManagement groups={mockGroups} peopleCount={10} />);
 
-      const exportButton = screen.getByRole('button', { name: /export data/i });
+      const exportButton = screen.getByRole('button', { name: /^export$/i });
       await user.click(exportButton);
 
       expect(screen.getByRole('button', { name: /exporting\.\.\./i })).toBeDisabled();
@@ -159,7 +184,7 @@ describe('AccountManagement - Export Data', () => {
 
       render(<AccountManagement groups={[]} peopleCount={0} />);
 
-      const exportButton = screen.getByRole('button', { name: /export data/i });
+      const exportButton = screen.getByRole('button', { name: /^export$/i });
       expect(exportButton).toBeDisabled();
 
       // Try to click (should not trigger anything since it's disabled)

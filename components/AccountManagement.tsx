@@ -5,11 +5,19 @@ import { useRouter } from 'next/navigation';
 import { signOut } from 'next-auth/react';
 import GroupsSelector from './GroupsSelector';
 import { Button } from './ui/Button';
+import { useTranslations } from 'next-intl';
 
 interface Group {
   id: string;
   name: string;
   color: string | null;
+}
+
+interface ImportData {
+  version: string | number;
+  groups: Group[];
+  people: unknown[];
+  customRelationshipTypes?: unknown[];
 }
 
 interface AccountManagementProps {
@@ -18,6 +26,7 @@ interface AccountManagementProps {
 }
 
 export default function AccountManagement({ groups, peopleCount }: AccountManagementProps) {
+  const t = useTranslations('settings.account');
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -32,7 +41,7 @@ export default function AccountManagement({ groups, peopleCount }: AccountManage
   const [isValidating, setIsValidating] = useState(false);
   const [importMessage, setImportMessage] = useState('');
   const [importFile, setImportFile] = useState<File | null>(null);
-  const [importData, setImportData] = useState<any>(null);
+  const [importData, setImportData] = useState<ImportData | null>(null);
   const [importPreview, setImportPreview] = useState<{
     groups: number;
     people: number;
@@ -70,7 +79,7 @@ export default function AccountManagement({ groups, peopleCount }: AccountManage
       const response = await fetch(exportUrl);
 
       if (!response.ok) {
-        setExportMessage('Failed to export data');
+        setExportMessage(t('exportFailed'));
         return;
       }
 
@@ -89,10 +98,10 @@ export default function AccountManagement({ groups, peopleCount }: AccountManage
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
 
-      setExportMessage('Data exported successfully');
+      setExportMessage(t('exportSuccess'));
       setTimeout(() => setExportMessage(''), 3000);
     } catch {
-      setExportMessage('Failed to export data');
+      setExportMessage(t('exportFailed'));
     } finally {
       setIsExporting(false);
     }
@@ -137,19 +146,19 @@ export default function AccountManagement({ groups, peopleCount }: AccountManage
           const validationResult = await validationResponse.json();
           setImportValidation(validationResult);
         } else {
-          setImportMessage('Failed to validate import data');
+          setImportMessage(t('importFailed'));
           setImportFile(null);
           setImportData(null);
           setImportPreview(null);
         }
       } else {
-        setImportMessage('Invalid file format');
+        setImportMessage(t('invalidFileFormat'));
         setImportFile(null);
         setImportData(null);
         setImportPreview(null);
       }
     } catch {
-      setImportMessage('Invalid JSON file');
+      setImportMessage(t('invalidJSON'));
       setImportFile(null);
       setImportData(null);
       setImportPreview(null);
@@ -167,7 +176,7 @@ export default function AccountManagement({ groups, peopleCount }: AccountManage
 
     try {
       // Build the request body
-      const requestBody: any = { ...importData };
+      const requestBody: Record<string, unknown> = { ...importData };
 
       // If importing specific groups, add the groupIds parameter
       if (importMode === 'groups' && selectedImportGroupIds.length > 0) {
@@ -190,7 +199,11 @@ export default function AccountManagement({ groups, peopleCount }: AccountManage
       }
 
       setImportMessage(
-        `Successfully imported ${result.imported.groups} groups, ${result.imported.people} people, and ${result.imported.relationshipTypes || 0} custom relationship types`
+        t('importSuccess', {
+          groups: result.imported.groups,
+          people: result.imported.people,
+          types: result.imported.relationshipTypes || 0
+        })
       );
       setImportFile(null);
       setImportData(null);
@@ -206,7 +219,7 @@ export default function AccountManagement({ groups, peopleCount }: AccountManage
         router.refresh();
       }, 2000);
     } catch {
-      setImportMessage('Failed to import data');
+      setImportMessage(t('importFailed'));
     } finally {
       setIsImporting(false);
     }
@@ -215,12 +228,12 @@ export default function AccountManagement({ groups, peopleCount }: AccountManage
   // Delete account
   const handleDeleteAccount = async () => {
     if (deleteConfirmation !== 'DELETE') {
-      setDeleteError('Please type DELETE to confirm');
+      setDeleteError(t('deleteError'));
       return;
     }
 
     if (!deletePassword) {
-      setDeleteError('Password is required');
+      setDeleteError(t('passwordRequired'));
       return;
     }
 
@@ -242,14 +255,14 @@ export default function AccountManagement({ groups, peopleCount }: AccountManage
       const data = await response.json();
 
       if (!response.ok) {
-        setDeleteError(data.error || 'Failed to delete account');
+        setDeleteError(data.error || t('importFailed'));
         return;
       }
 
       // Sign out and redirect to login
       await signOut({ redirect: true, callbackUrl: '/login' });
     } catch {
-      setDeleteError('Failed to delete account');
+      setDeleteError(t('importFailed'));
     } finally {
       setIsDeleting(false);
     }
@@ -260,11 +273,10 @@ export default function AccountManagement({ groups, peopleCount }: AccountManage
       {/* Export Section */}
       <div>
         <h3 className="text-lg font-semibold text-foreground mb-2">
-          Export Data
+          {t('exportData')}
         </h3>
         <p className="text-sm text-muted mb-4">
-          Download your data as a JSON file. This includes people, groups,
-          relationships, and custom relationship types.
+          {t('exportDescription')}
         </p>
 
         {/* Export Mode Toggle */}
@@ -281,7 +293,7 @@ export default function AccountManagement({ groups, peopleCount }: AccountManage
                 className="w-4 h-4 text-blue-600 bg-surface-elevated border-border focus:ring-blue-500 disabled:opacity-50"
               />
               <span className={`text-sm ${peopleCount === 0 && groups.length === 0 ? 'text-muted' : 'text-muted'}`}>
-                Export everything
+                {t('exportEverything')}
               </span>
             </label>
             <label className="flex items-center gap-2 cursor-pointer">
@@ -295,7 +307,7 @@ export default function AccountManagement({ groups, peopleCount }: AccountManage
                 className="w-4 h-4 text-blue-600 bg-surface-elevated border-border focus:ring-blue-500 disabled:opacity-50"
               />
               <span className={`text-sm ${groups.length === 0 ? 'text-muted' : 'text-muted'}`}>
-                Export specific groups
+                {t('exportSpecificGroups')}
               </span>
             </label>
           </div>
@@ -310,7 +322,7 @@ export default function AccountManagement({ groups, peopleCount }: AccountManage
               />
               {selectedGroupIds.length > 0 && (
                 <p className="text-xs text-muted mt-2">
-                  Will export people in selected groups, their group memberships, and relationships between them.
+                  {t('willExport')}
                 </p>
               )}
             </div>
@@ -325,13 +337,13 @@ export default function AccountManagement({ groups, peopleCount }: AccountManage
             (exportMode === 'all' && peopleCount === 0 && groups.length === 0)
           }
         >
-          {isExporting ? 'Exporting...' : 'Export Data'}
+          {isExporting ? t('exporting') : t('exportButton')}
         </Button>
 
         {/* Show helpful message when no data to export */}
         {exportMode === 'all' && peopleCount === 0 && groups.length === 0 && (
           <p className="mt-2 text-sm text-muted">
-            No data to export. Add people or groups first.
+            {t('noDataToExport')}
           </p>
         )}
 
@@ -351,11 +363,10 @@ export default function AccountManagement({ groups, peopleCount }: AccountManage
       {/* Import Section */}
       <div>
         <h3 className="text-lg font-semibold text-foreground mb-2">
-          Import Data
+          {t('importData')}
         </h3>
         <p className="text-sm text-muted mb-4">
-          Import data from a previously exported JSON file. This will add to your
-          existing data without removing anything.
+          {t('importDescription')}
         </p>
 
         <div className="space-y-4">
@@ -391,16 +402,16 @@ export default function AccountManagement({ groups, peopleCount }: AccountManage
                     {importFile.name}
                   </p>
                   <p className="text-xs text-muted mt-1">
-                    Click to choose a different file
+                    {t('clickToChooseDifferent')}
                   </p>
                 </div>
               ) : (
                 <div className="text-center">
                   <p className="text-sm font-medium text-foreground">
-                    Click to select a JSON file
+                    {t('clickToSelect')}
                   </p>
                   <p className="text-xs text-muted mt-1">
-                    or drag and drop
+                    {t('dragAndDrop')}
                   </p>
                 </div>
               )}
@@ -410,7 +421,7 @@ export default function AccountManagement({ groups, peopleCount }: AccountManage
           {isValidating && (
             <div className="bg-surface-elevated border border-border rounded-lg p-4">
               <p className="text-sm text-muted">
-                Validating import data...
+                {t('validatingImport')}
               </p>
             </div>
           )}
@@ -426,15 +437,15 @@ export default function AccountManagement({ groups, peopleCount }: AccountManage
                   ? 'text-blue-900 dark:text-blue-300'
                   : 'text-warning'
               }`}>
-                {importValidation.valid ? 'Import Preview' : 'Import Limit Exceeded'}
+                {importValidation.valid ? t('importPreview') : t('importLimitExceeded')}
               </h4>
 
               {importValidation.valid ? (
                 <>
                   <ul className="text-sm text-blue-800 dark:text-blue-400 space-y-1 mb-4">
-                    <li>• {importPreview.groups} groups ({importValidation.newGroupsCount} new)</li>
-                    <li>• {importPreview.people} people ({importValidation.newPeopleCount} new)</li>
-                    <li>• {importPreview.customRelationshipTypes} custom relationship types</li>
+                    <li>• {t('groupsNew', { count: importPreview.groups, newCount: importValidation.newGroupsCount || 0 })}</li>
+                    <li>• {t('peopleNew', { count: importPreview.people, newCount: importValidation.newPeopleCount || 0 })}</li>
+                    <li>• {t('customRelationshipTypes', { count: importPreview.customRelationshipTypes })}</li>
                   </ul>
 
                   {/* Import Mode Toggle - only show if there are groups */}
@@ -451,7 +462,7 @@ export default function AccountManagement({ groups, peopleCount }: AccountManage
                             className="w-4 h-4 text-blue-600 bg-surface-elevated border-border focus:ring-blue-500"
                           />
                           <span className="text-sm text-blue-800 dark:text-blue-300">
-                            Import everything
+                            {t('importEverything')}
                           </span>
                         </label>
                         <label className="flex items-center gap-2 cursor-pointer">
@@ -464,7 +475,7 @@ export default function AccountManagement({ groups, peopleCount }: AccountManage
                             className="w-4 h-4 text-blue-600 bg-surface-elevated border-border focus:ring-blue-500"
                           />
                           <span className="text-sm text-blue-800 dark:text-blue-300">
-                            Import specific groups
+                            {t('importSpecificGroups')}
                           </span>
                         </label>
                       </div>
@@ -472,7 +483,7 @@ export default function AccountManagement({ groups, peopleCount }: AccountManage
                       {importMode === 'groups' && (
                         <div className="pl-6">
                           <div className="space-y-2 mb-3">
-                            {importData.groups.map((group: any) => (
+                            {importData.groups.map((group: Group) => (
                               <label
                                 key={group.id}
                                 className="flex items-center gap-3 p-3 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 cursor-pointer transition-colors"
@@ -505,7 +516,11 @@ export default function AccountManagement({ groups, peopleCount }: AccountManage
                           </div>
                           {selectedImportGroupIds.length > 0 && (
                             <p className="text-xs text-blue-700 dark:text-blue-400">
-                              Will import {selectedImportGroupIds.length} {selectedImportGroupIds.length === 1 ? 'group' : 'groups'}, people in {selectedImportGroupIds.length === 1 ? 'this group' : 'those groups'}, and relationships between them.
+                              {t('willImport', {
+                                count: selectedImportGroupIds.length,
+                                type: selectedImportGroupIds.length === 1 ? t('group') : t('groups_plural'),
+                                location: selectedImportGroupIds.length === 1 ? t('thisGroup') : t('thoseGroups')
+                              })}
                             </p>
                           )}
                         </div>
@@ -518,7 +533,7 @@ export default function AccountManagement({ groups, peopleCount }: AccountManage
                     disabled={isImporting || (importMode === 'groups' && selectedImportGroupIds.length === 0)}
                     className="mt-3 px-4 py-2 bg-primary text-white rounded-lg font-semibold hover:bg-primary-dark shadow-lg hover:shadow-primary/50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {isImporting ? 'Importing...' : 'Confirm Import'}
+                    {isImporting ? t('importing') : t('confirmImport')}
                   </button>
                 </>
               ) : (
@@ -527,11 +542,11 @@ export default function AccountManagement({ groups, peopleCount }: AccountManage
                     {importValidation.message}
                   </p>
                   <div className="text-sm text-red-700 dark:text-red-400 bg-red-100 dark:bg-red-900/40 p-3 rounded">
-                    <p className="font-medium mb-1">Current usage:</p>
+                    <p className="font-medium mb-1">{t('currentUsage')}</p>
                     <ul className="space-y-1 ml-4">
-                      <li>• {importValidation.error === 'people' ? 'People' : 'Groups'}: {importValidation.current} / {importValidation.limit}</li>
-                      <li>• New from import: {importValidation.newPeopleCount || importValidation.newGroupsCount}</li>
-                      <li>• Total after import: {importValidation.totalAfterImport}</li>
+                      <li>• {importValidation.error === 'people' ? t('people') : t('groups')}: {importValidation.current} / {importValidation.limit}</li>
+                      <li>• {t('newFromImport', { count: (importValidation.newPeopleCount || importValidation.newGroupsCount || 0) })}</li>
+                      <li>• {t('totalAfterImport', { count: importValidation.totalAfterImport || 0 })}</li>
                     </ul>
                   </div>
                   <button
@@ -548,7 +563,7 @@ export default function AccountManagement({ groups, peopleCount }: AccountManage
                     }}
                     className="px-4 py-2 bg-surface-elevated text-foreground rounded-lg font-medium hover:bg-surface-elevated transition-colors"
                   >
-                    Choose Different File
+                    {t('chooseDifferentFile')}
                   </button>
                 </div>
               )}
@@ -572,11 +587,10 @@ export default function AccountManagement({ groups, peopleCount }: AccountManage
       {/* Delete Account Section */}
       <div className="border-t border-border pt-8">
         <h3 className="text-lg font-semibold text-red-600 dark:text-red-400 mb-2">
-          Delete Account
+          {t('deleteAccount')}
         </h3>
         <p className="text-sm text-muted mb-4">
-          Permanently delete your account and all associated data. This action cannot
-          be undone.
+          {t('deleteAccountDescription')}
         </p>
 
         {!showDeleteDialog ? (
@@ -584,7 +598,7 @@ export default function AccountManagement({ groups, peopleCount }: AccountManage
             variant="danger"
             onClick={() => setShowDeleteDialog(true)}
           >
-            Delete Account
+            {t('deleteAccountButton')}
           </Button>
         ) : (
           <div className="bg-warning/10 border-2 border-warning rounded-lg p-6 space-y-4">
@@ -604,12 +618,10 @@ export default function AccountManagement({ groups, peopleCount }: AccountManage
               </svg>
               <div>
                 <h4 className="font-bold text-red-900 dark:text-red-300 mb-2">
-                  Warning: This is permanent!
+                  {t('warningPermanent')}
                 </h4>
                 <p className="text-sm text-red-800 dark:text-red-400 mb-4">
-                  All your data including people, groups, relationships, and custom
-                  relationship types will be permanently deleted. We recommend exporting
-                  your data first.
+                  {t('deleteWarningMessage')}
                 </p>
               </div>
             </div>
@@ -625,7 +637,7 @@ export default function AccountManagement({ groups, peopleCount }: AccountManage
                 htmlFor="delete-password"
                 className="block text-sm font-medium text-muted mb-1"
               >
-                Confirm your password
+                {t('confirmPassword')}
               </label>
               <input
                 type="password"
@@ -641,7 +653,7 @@ export default function AccountManagement({ groups, peopleCount }: AccountManage
                 htmlFor="delete-confirmation"
                 className="block text-sm font-medium text-muted mb-1"
               >
-                Type <strong>DELETE</strong> to confirm
+                {t('typeToConfirm')}
               </label>
               <input
                 type="text"
@@ -659,7 +671,7 @@ export default function AccountManagement({ groups, peopleCount }: AccountManage
                 onClick={handleDeleteAccount}
                 disabled={isDeleting || deleteConfirmation !== 'DELETE'}
               >
-                {isDeleting ? 'Deleting...' : 'Delete My Account'}
+                {isDeleting ? t('deleting') : t('deleteMyAccount')}
               </Button>
               <Button
                 variant="secondary"
@@ -671,7 +683,7 @@ export default function AccountManagement({ groups, peopleCount }: AccountManage
                 }}
                 disabled={isDeleting}
               >
-                Cancel
+                {t('cancel')}
               </Button>
             </div>
           </div>

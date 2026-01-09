@@ -117,7 +117,7 @@ export async function sendSubscriptionCreatedEmail(
   const price = formatPrice(tier, frequency, currency, amountInCents);
   const frequencyText = formatFrequency(frequency);
 
-  const template = emailTemplates.subscriptionCreated(
+  const template = await emailTemplates.subscriptionCreated(
     tierInfo.name,
     price,
     frequencyText
@@ -161,7 +161,7 @@ export async function sendSubscriptionChangedEmail(
   const frequencyText = formatFrequency(frequency);
   const tierIsUpgrade = isUpgrade(oldTier, newTier);
 
-  const template = emailTemplates.subscriptionChanged(
+  const template = await emailTemplates.subscriptionChanged(
     oldTierInfo.name,
     newTierInfo.name,
     price,
@@ -202,7 +202,7 @@ export async function sendSubscriptionCanceledEmail(
   const tierInfo = TIER_INFO[tier];
   const accessUntilFormatted = accessUntil ? formatDate(accessUntil) : null;
 
-  const template = emailTemplates.subscriptionCanceled(
+  const template = await emailTemplates.subscriptionCanceled(
     tierInfo.name,
     accessUntilFormatted,
     immediately

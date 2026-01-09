@@ -3,6 +3,7 @@ import { isSaasMode as getIsSaasMode } from '@/lib/features';
 import { redirect } from 'next/navigation';
 import Navigation from '@/components/Navigation';
 import SettingsNav from '@/components/SettingsNav';
+import { getTranslations } from 'next-intl/server';
 
 export default async function SettingsLayout({
   children,
@@ -16,6 +17,7 @@ export default async function SettingsLayout({
   }
 
   const isSaasMode = getIsSaasMode();
+  const t = await getTranslations('settings');
 
   return (
     <div className="min-h-screen bg-background">
@@ -29,7 +31,7 @@ export default async function SettingsLayout({
       <main className="max-w-6xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
           <h1 className="text-3xl font-bold text-foreground mb-6">
-            Settings
+            {t('title')}
           </h1>
 
           <div className="flex flex-col md:flex-row gap-6">

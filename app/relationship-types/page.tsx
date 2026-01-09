@@ -5,9 +5,11 @@ import { prisma } from '@/lib/prisma';
 import Navigation from '@/components/Navigation';
 import EmptyState from '@/components/EmptyState';
 import DeleteRelationshipTypeButton from '@/components/DeleteRelationshipTypeButton';
+import { getTranslations } from 'next-intl/server';
 
 export default async function RelationshipTypesPage() {
   const session = await auth();
+  const t = await getTranslations('relationshipTypes');
 
   if (!session?.user) {
     redirect('/login');
@@ -54,13 +56,13 @@ export default async function RelationshipTypesPage() {
         <div className="px-4 py-6 sm:px-0">
           <div className="flex justify-between items-center mb-6">
             <h1 className="text-3xl font-bold text-foreground">
-              Relationship Types
+              {t('title')}
             </h1>
             <Link
               href="/relationship-types/new"
               className="px-4 py-2 bg-primary text-white rounded-lg font-semibold hover:bg-primary-dark transition-colors shadow-lg hover:shadow-primary/50"
             >
-              Create New Type
+              {t('createNewType')}
             </Link>
           </div>
 
@@ -70,16 +72,16 @@ export default async function RelationshipTypesPage() {
                 <thead className="bg-surface-elevated">
                   <tr>
                     <th className="hidden sm:table-cell px-6 py-3 text-left text-xs font-medium text-muted uppercase tracking-wider">
-                      Color
+                      {t('color')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-muted uppercase tracking-wider">
-                      Relationship
+                      {t('relationship')}
                     </th>
                     <th className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-muted uppercase tracking-wider">
-                      Inverse Relationship
+                      {t('inverseRelationship')}
                     </th>
                     <th className="px-6 py-3 text-right text-xs font-medium text-muted uppercase tracking-wider">
-                      Actions
+                      {t('actions')}
                     </th>
                   </tr>
                 </thead>
@@ -97,7 +99,7 @@ export default async function RelationshipTypesPage() {
                           {type.label}
                         </div>
                         <div className="text-xs text-muted">
-                          Used {type.totalUsageCount} time(s)
+                          {t('usedTimes', { count: type.totalUsageCount })}
                         </div>
                       </td>
                       <td className="hidden md:table-cell px-6 py-4 whitespace-nowrap">
@@ -116,7 +118,7 @@ export default async function RelationshipTypesPage() {
                           <Link
                             href={`/relationship-types/${type.id}/edit`}
                             className="text-primary hover:text-primary-dark transition-colors"
-                            title="Edit"
+                            title={t('edit')}
                           >
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -144,9 +146,9 @@ export default async function RelationshipTypesPage() {
                     </svg>
                   </div>
                 }
-                title="No relationship types"
-                description="Create relationship types to categorize the connections in your network."
-                actionLabel="Create Relationship Type"
+                title={t('noRelationshipTypes')}
+                description={t('noRelationshipTypesDescription')}
+                actionLabel={t('createRelationshipType')}
                 actionHref="/relationship-types/new"
               />
             </div>

@@ -1,6 +1,8 @@
 import { Resend } from "resend";
 import { env } from "./env";
 import { escapeHtml } from "./sanitize";
+import { getTranslationsForLocale, type SupportedLocale } from "./i18n-utils";
+import { getUserLocale } from "./locale";
 
 const resend = new Resend(env.RESEND_API_KEY);
 
@@ -61,7 +63,10 @@ export async function sendEmail({ to, subject, html, text, from = 'default' }: S
 /**
  * Wrap content in a beautiful HTML email template
  */
-function wrapInTemplate(content: string): string {
+async function wrapInTemplate(content: string, locale: SupportedLocale = 'en'): Promise<string> {
+  const t = await getTranslationsForLocale(locale, 'emails.common');
+  const year = new Date().getFullYear();
+
   return `
 <!DOCTYPE html>
 <html lang="en">
@@ -103,14 +108,14 @@ function wrapInTemplate(content: string): string {
               <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
                 <tr>
                   <td align="center" style="padding-bottom: 16px;">
-                    <a href="${APP_URL}" style="color: ${COLORS.primary}; text-decoration: none; font-size: 14px; font-weight: 500;">Visit Nametag</a>
+                    <a href="${APP_URL}" style="color: ${COLORS.primary}; text-decoration: none; font-size: 14px; font-weight: 500;">${t('visitNametag')}</a>
                   </td>
                 </tr>
                 <tr>
                   <td align="center">
                     <p style="margin: 0; color: ${COLORS.textLight}; font-size: 12px; line-height: 1.5;">
-                      You're receiving this email because you have an account at Nametag.<br>
-                      &copy; ${new Date().getFullYear()} Nametag. All rights reserved.
+                      ${t('footer')}<br>
+                      ${t('copyright', { year })}
                     </p>
                   </td>
                 </tr>
@@ -203,125 +208,170 @@ function emailNote(text: string): string {
 
 // Email template helpers for common use cases
 export const emailTemplates = {
-  accountVerification: (verificationUrl: string) => ({
-    subject: "Verify your Nametag account",
-    html: wrapInTemplate(`
-      ${emailHeading("Welcome to Nametag!")}
-      ${emailParagraph("Thanks for signing up! Please verify your email address to get started with managing your relationships.")}
-      ${emailButton(verificationUrl, "Verify Email Address")}
-      ${emailNote("If you didn't create an account, you can safely ignore this email.")}
-    `),
-    text: `Welcome to Nametag! Please verify your email by visiting: ${verificationUrl}`,
-  }),
+  accountVerification: async (verificationUrl: string, locale: SupportedLocale = 'en') => {
+    const t = await getTranslationsForLocale(locale, 'emails.verification');
+    return {
+      subject: t('subject'),
+      html: await wrapInTemplate(`
+        ${emailHeading(t('heading'))}
+        ${emailParagraph(t('body'))}
+        ${emailButton(verificationUrl, t('button'))}
+        ${emailNote(t('note'))}
+      `, locale),
+      text: `${t('heading')} ${t('body')} ${verificationUrl}`,
+    };
+  },
 
-  importantDateReminder: (personName: string, eventType: string, date: string) => ({
-    subject: `Reminder: ${personName}'s ${eventType} is coming up`,
-    html: wrapInTemplate(`
-      ${emailHeading("Upcoming Event Reminder")}
-      ${emailInfoBox(`<strong>${escapeHtml(personName)}</strong>'s ${escapeHtml(eventType)} is on <strong>${escapeHtml(date)}</strong>.`, 'info')}
-      ${emailParagraph("Don't forget to reach out and make their day special!")}
-      ${emailButton(`${APP_URL}/dashboard`, "Open Nametag")}
-    `),
-    text: `Reminder: ${personName}'s ${eventType} is on ${date}. Don't forget to reach out!`,
-  }),
+  importantDateReminder: async (personName: string, eventType: string, date: string, locale: SupportedLocale = 'en') => {
+    const t = await getTranslationsForLocale(locale, 'emails.importantDateReminder');
+    return {
+      subject: t('subject', { personName, eventType }),
+      html: await wrapInTemplate(`
+        ${emailHeading(t('heading'))}
+        ${emailInfoBox(t('infoBox', { personName: `<strong>${escapeHtml(personName)}</strong>`, eventType: escapeHtml(eventType), date: `<strong>${escapeHtml(date)}</strong>` }), 'info')}
+        ${emailParagraph(t('body'))}
+        ${emailButton(`${APP_URL}/dashboard`, t('button'))}
+      `, locale),
+      text: `${t('subject', { personName, eventType })} ${t('infoBox', { personName, eventType, date })} ${t('body')}`,
+    };
+  },
 
-  contactReminder: (personName: string, lastContactDate: string | null, interval: string) => ({
-    subject: `Time to catch up with ${personName}`,
-    html: wrapInTemplate(`
-      ${emailHeading("Stay in Touch")}
-      ${emailParagraph(`It's been a while since you last contacted <strong>${escapeHtml(personName)}</strong>${lastContactDate ? ` (last contact: ${escapeHtml(lastContactDate)})` : ''}.`)}
-      ${emailInfoBox(`You asked to be reminded to catch up after ${escapeHtml(interval)} of your last contact.`, 'info')}
-      ${emailParagraph("Why not reach out today? A simple message can brighten someone's day.")}
-      ${emailButton(`${APP_URL}/dashboard`, "Open Nametag")}
-    `),
-    text: `Time to catch up with ${personName}!${lastContactDate ? ` Last contact: ${lastContactDate}.` : ''} You asked to be reminded to catch up after ${interval} of your last contact. Why not reach out today?`,
-  }),
+  contactReminder: async (personName: string, lastContactDate: string | null, interval: string, locale: SupportedLocale = 'en') => {
+    const t = await getTranslationsForLocale(locale, 'emails.contactReminder');
+    const lastContactText = lastContactDate ? ` (${t('lastContact', { date: escapeHtml(lastContactDate) })})` : '';
+    return {
+      subject: t('subject', { personName }),
+      html: await wrapInTemplate(`
+        ${emailHeading(t('heading'))}
+        ${emailParagraph(t('body', { personName: `<strong>${escapeHtml(personName)}</strong>` }) + lastContactText + '.')}
+        ${emailInfoBox(t('infoBox', { interval: escapeHtml(interval) }), 'info')}
+        ${emailParagraph(t('suggestion'))}
+        ${emailButton(`${APP_URL}/dashboard`, t('button'))}
+      `, locale),
+      text: `${t('subject', { personName })} ${t('body', { personName })}${lastContactDate ? ` ${t('lastContact', { date: lastContactDate })}` : ''}. ${t('infoBox', { interval })} ${t('suggestion')}`,
+    };
+  },
 
-  passwordReset: (resetUrl: string) => ({
-    subject: "Reset your Nametag password",
-    html: wrapInTemplate(`
-      ${emailHeading("Password Reset Request")}
-      ${emailParagraph("We received a request to reset your password. Click the button below to set a new password:")}
-      ${emailButton(resetUrl, "Reset Password")}
-      ${emailInfoBox("This link will expire in 1 hour.", 'warning')}
-      ${emailNote("If you didn't request a password reset, you can safely ignore this email. Your password will remain unchanged.")}
-    `),
-    text: `Password Reset Request\n\nWe received a request to reset your password. Visit this link to set a new password: ${resetUrl}\n\nThis link will expire in 1 hour.\n\nIf you didn't request a password reset, you can safely ignore this email.`,
-  }),
+  passwordReset: async (resetUrl: string, locale: SupportedLocale = 'en') => {
+    const t = await getTranslationsForLocale(locale, 'emails.passwordReset');
+    return {
+      subject: t('subject'),
+      html: await wrapInTemplate(`
+        ${emailHeading(t('heading'))}
+        ${emailParagraph(t('body'))}
+        ${emailButton(resetUrl, t('button'))}
+        ${emailInfoBox(t('infoBox'), 'warning')}
+        ${emailNote(t('note'))}
+      `, locale),
+      text: `${t('heading')}\n\n${t('body')} ${resetUrl}\n\n${t('infoBox')}\n\n${t('note')}`,
+    };
+  },
 
-  subscriptionCreated: (tierName: string, price: string, frequency: string) => ({
-    subject: `Welcome to Nametag ${tierName}!`,
-    html: wrapInTemplate(`
-      ${emailHeading(`Welcome to Nametag ${escapeHtml(tierName)}!`)}
-      ${emailParagraph("Thank you for subscribing to Nametag. Your subscription is now active and you have access to all the features included in your plan.")}
-      ${emailHeading("Subscription Details", 2)}
-      ${emailList([
-        `<strong>Plan:</strong> ${escapeHtml(tierName)}`,
-        `<strong>Price:</strong> ${escapeHtml(price)} (${escapeHtml(frequency)})`,
-      ])}
-      ${emailInfoBox("Start managing your relationships more effectively today!", 'success')}
-      ${emailButton(`${APP_URL}/dashboard`, "Go to Dashboard")}
-      ${emailNote("If you have any questions, feel free to reach out to our support team.")}
-    `),
-    text: `Welcome to Nametag ${tierName}!\n\nThank you for subscribing to Nametag. Your subscription is now active.\n\nSubscription Details:\n- Plan: ${tierName}\n- Price: ${price} (${frequency})\n\nYou now have access to all the features included in your plan. Start managing your relationships more effectively today!\n\nIf you have any questions, feel free to reach out to our support team.`,
-  }),
-
-  subscriptionChanged: (oldTierName: string, newTierName: string, price: string, frequency: string, isUpgrade: boolean) => ({
-    subject: isUpgrade
-      ? "Your Nametag subscription has been upgraded"
-      : "Your Nametag subscription has been changed",
-    html: wrapInTemplate(isUpgrade
-      ? `
-        ${emailHeading("Subscription Upgraded")}
-        ${emailParagraph("Your Nametag subscription has been successfully upgraded.")}
-        ${emailHeading("Upgrade Details", 2)}
+  subscriptionCreated: async (tierName: string, price: string, frequency: string, locale: SupportedLocale = 'en') => {
+    const t = await getTranslationsForLocale(locale, 'emails.subscriptionCreated');
+    return {
+      subject: t('subject', { tierName }),
+      html: await wrapInTemplate(`
+        ${emailHeading(t('heading', { tierName: escapeHtml(tierName) }))}
+        ${emailParagraph(t('body'))}
+        ${emailHeading(t('detailsHeading'), 2)}
         ${emailList([
-          `<strong>Previous plan:</strong> ${escapeHtml(oldTierName)}`,
-          `<strong>New plan:</strong> ${escapeHtml(newTierName)}`,
-          `<strong>New price:</strong> ${escapeHtml(price)} (${escapeHtml(frequency)})`,
+          t('plan', { tierName: escapeHtml(tierName) }),
+          t('price', { price: escapeHtml(price), frequency: escapeHtml(frequency) }),
         ])}
-        ${emailInfoBox("Your new plan features are now available. Enjoy the expanded limits and capabilities!", 'success')}
-        ${emailButton(`${APP_URL}/dashboard`, "Go to Dashboard")}
-      `
-      : `
-        ${emailHeading("Subscription Changed")}
-        ${emailParagraph("Your Nametag subscription has been changed.")}
-        ${emailHeading("Plan Details", 2)}
-        ${emailList([
-          `<strong>Previous plan:</strong> ${escapeHtml(oldTierName)}`,
-          `<strong>New plan:</strong> ${escapeHtml(newTierName)}`,
-          `<strong>New price:</strong> ${escapeHtml(price)} (${escapeHtml(frequency)})`,
-        ])}
-        ${emailParagraph(`Your plan has been updated. You now have access to all ${escapeHtml(newTierName)} features.`)}
-        ${emailButton(`${APP_URL}/dashboard`, "Go to Dashboard")}
-      `
-    ),
-    text: isUpgrade
-      ? `Subscription Upgraded\n\nYour Nametag subscription has been successfully upgraded.\n\nUpgrade Details:\n- Previous plan: ${oldTierName}\n- New plan: ${newTierName}\n- New price: ${price} (${frequency})\n\nYour new plan features are now available. Enjoy the expanded limits and capabilities!`
-      : `Subscription Changed\n\nYour Nametag subscription has been changed.\n\nPlan Details:\n- Previous plan: ${oldTierName}\n- New plan: ${newTierName}\n- New price: ${price} (${frequency})\n\nYour plan has been updated. You now have access to all ${newTierName} features.`,
-  }),
+        ${emailInfoBox(t('infoBox'), 'success')}
+        ${emailButton(`${APP_URL}/dashboard`, t('button'))}
+        ${emailNote(t('note'))}
+      `, locale),
+      text: `${t('heading', { tierName })}\n\n${t('body')}\n\n${t('detailsHeading')}:\n- ${t('plan', { tierName })}\n- ${t('price', { price, frequency })}\n\n${t('infoBox')}\n\n${t('note')}`,
+    };
+  },
 
-  subscriptionCanceled: (tierName: string, accessUntil: string | null, immediately: boolean) => ({
-    subject: "Your Nametag subscription has been canceled",
-    html: wrapInTemplate(immediately || !accessUntil
-      ? `
-        ${emailHeading("Subscription Canceled")}
-        ${emailParagraph(`Your Nametag ${escapeHtml(tierName)} subscription has been canceled and your account has been downgraded to the Free plan.`)}
-        ${emailParagraph("You can continue using Nametag with the Free plan features. If you'd like to resubscribe at any time, visit your billing settings.")}
-        ${emailButton(`${APP_URL}/settings/billing`, "View Billing Settings")}
-        ${emailNote("We're sorry to see you go. If you have any feedback about your experience, we'd love to hear from you.")}
-      `
-      : `
-        ${emailHeading("Subscription Canceled")}
-        ${emailParagraph(`Your Nametag ${escapeHtml(tierName)} subscription has been canceled.`)}
-        ${emailInfoBox(`<strong>Good news:</strong> You'll continue to have access to all ${escapeHtml(tierName)} features until <strong>${escapeHtml(accessUntil)}</strong>.`, 'info')}
-        ${emailParagraph("After this date, your account will be downgraded to the Free plan. You can resubscribe at any time from your billing settings.")}
-        ${emailButton(`${APP_URL}/settings/billing`, "View Billing Settings")}
-        ${emailNote("We're sorry to see you go. If you have any feedback about your experience, we'd love to hear from you.")}
-      `
-    ),
-    text: immediately || !accessUntil
-      ? `Subscription Canceled\n\nYour Nametag ${tierName} subscription has been canceled and your account has been downgraded to the Free plan.\n\nYou can continue using Nametag with the Free plan features. If you'd like to resubscribe at any time, visit your billing settings.\n\nWe're sorry to see you go. If you have any feedback about your experience, we'd love to hear from you.`
-      : `Subscription Canceled\n\nYour Nametag ${tierName} subscription has been canceled.\n\nGood news: You'll continue to have access to all ${tierName} features until ${accessUntil}.\n\nAfter this date, your account will be downgraded to the Free plan. You can resubscribe at any time from your billing settings.\n\nWe're sorry to see you go. If you have any feedback about your experience, we'd love to hear from you.`,
-  }),
+  subscriptionChanged: async (oldTierName: string, newTierName: string, price: string, frequency: string, isUpgrade: boolean, locale: SupportedLocale = 'en') => {
+    const t = await getTranslationsForLocale(locale, 'emails.subscriptionChanged');
+    const subject = isUpgrade ? t('subjectUpgrade') : t('subjectChange');
+    const heading = isUpgrade ? t('headingUpgrade') : t('headingChange');
+    const body = isUpgrade ? t('bodyUpgrade') : t('bodyChange');
+    const detailsHeading = isUpgrade ? t('detailsHeading') : t('planDetailsHeading');
+
+    return {
+      subject,
+      html: await wrapInTemplate(isUpgrade
+        ? `
+          ${emailHeading(heading)}
+          ${emailParagraph(body)}
+          ${emailHeading(detailsHeading, 2)}
+          ${emailList([
+            t('previousPlan', { tierName: escapeHtml(oldTierName) }),
+            t('newPlan', { tierName: escapeHtml(newTierName) }),
+            t('newPrice', { price: escapeHtml(price), frequency: escapeHtml(frequency) }),
+          ])}
+          ${emailInfoBox(t('infoBoxUpgrade'), 'success')}
+          ${emailButton(`${APP_URL}/dashboard`, t('button'))}
+        `
+        : `
+          ${emailHeading(heading)}
+          ${emailParagraph(body)}
+          ${emailHeading(detailsHeading, 2)}
+          ${emailList([
+            t('previousPlan', { tierName: escapeHtml(oldTierName) }),
+            t('newPlan', { tierName: escapeHtml(newTierName) }),
+            t('newPrice', { price: escapeHtml(price), frequency: escapeHtml(frequency) }),
+          ])}
+          ${emailParagraph(t('bodyChangeDetail', { tierName: escapeHtml(newTierName) }))}
+          ${emailButton(`${APP_URL}/dashboard`, t('button'))}
+        `, locale
+      ),
+      text: isUpgrade
+        ? `${heading}\n\n${body}\n\n${detailsHeading}:\n- ${t('previousPlan', { tierName: oldTierName })}\n- ${t('newPlan', { tierName: newTierName })}\n- ${t('newPrice', { price, frequency })}\n\n${t('infoBoxUpgrade')}`
+        : `${heading}\n\n${body}\n\n${detailsHeading}:\n- ${t('previousPlan', { tierName: oldTierName })}\n- ${t('newPlan', { tierName: newTierName })}\n- ${t('newPrice', { price, frequency })}\n\n${t('bodyChangeDetail', { tierName: newTierName })}`,
+    };
+  },
+
+  subscriptionCanceled: async (tierName: string, accessUntil: string | null, immediately: boolean, locale: SupportedLocale = 'en') => {
+    const t = await getTranslationsForLocale(locale, 'emails.subscriptionCanceled');
+
+    return {
+      subject: t('subject'),
+      html: await wrapInTemplate(immediately || !accessUntil
+        ? `
+          ${emailHeading(t('heading'))}
+          ${emailParagraph(t('bodyImmediate', { tierName: escapeHtml(tierName) }))}
+          ${emailParagraph(t('bodyImmediateContinue'))}
+          ${emailButton(`${APP_URL}/settings/billing`, t('button'))}
+          ${emailNote(t('note'))}
+        `
+        : `
+          ${emailHeading(t('heading'))}
+          ${emailParagraph(t('bodyScheduled', { tierName: escapeHtml(tierName) }))}
+          ${emailInfoBox(t('infoBox', { tierName: escapeHtml(tierName), accessUntil: `<strong>${escapeHtml(accessUntil)}</strong>` }), 'info')}
+          ${emailParagraph(t('bodyScheduledDetail'))}
+          ${emailButton(`${APP_URL}/settings/billing`, t('button'))}
+          ${emailNote(t('note'))}
+        `, locale
+      ),
+      text: immediately || !accessUntil
+        ? `${t('heading')}\n\n${t('bodyImmediate', { tierName })}\n\n${t('bodyImmediateContinue')}\n\n${t('note')}`
+        : `${t('heading')}\n\n${t('bodyScheduled', { tierName })}\n\n${t('infoBox', { tierName, accessUntil: accessUntil || '' })}\n\n${t('bodyScheduledDetail')}\n\n${t('note')}`,
+    };
+  },
 };
+
+/**
+ * Helper function to send localized emails
+ * Automatically detects the user's language preference
+ */
+export async function sendLocalizedEmail(
+  userId: string,
+  to: string | string[],
+  templateName: keyof typeof emailTemplates,
+  templateParams: unknown[],
+  from?: keyof typeof fromAddresses
+) {
+  const locale = await getUserLocale(userId);
+  // Template functions have varying signatures, so we use a type assertion here
+  const template = emailTemplates[templateName] as (...args: unknown[]) => Promise<{ subject: string; html: string; text: string }>;
+  const { subject, html, text } = await template(...templateParams, locale);
+
+  return sendEmail({ to, subject, html, text, from });
+}

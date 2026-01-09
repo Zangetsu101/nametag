@@ -1,9 +1,11 @@
 import { auth } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import ProfileForm from '@/components/ProfileForm';
+import { getTranslations } from 'next-intl/server';
 
 export default async function ProfileSettingsPage() {
   const session = await auth();
+  const t = await getTranslations('settings.profile');
 
   if (!session?.user) {
     redirect('/login');
@@ -12,10 +14,10 @@ export default async function ProfileSettingsPage() {
   return (
     <div className="bg-surface shadow rounded-lg p-6">
       <h2 className="text-xl font-bold text-foreground mb-4">
-        Profile
+        {t('title')}
       </h2>
       <p className="text-muted mb-6">
-        Manage your personal information and how others see you.
+        {t('pageDescription')}
       </p>
       <ProfileForm
         userId={session.user.id}

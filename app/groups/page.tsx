@@ -5,6 +5,7 @@ import { prisma } from '@/lib/prisma';
 import Navigation from '@/components/Navigation';
 import EmptyState from '@/components/EmptyState';
 import { canCreateResource } from '@/lib/billing/subscription';
+import { getTranslations } from 'next-intl/server';
 
 const ITEMS_PER_PAGE = 24;
 
@@ -14,6 +15,8 @@ export default async function GroupsPage({
   searchParams: Promise<{ page?: string }>;
 }) {
   const session = await auth();
+  const t = await getTranslations('groups');
+  const tCommon = await getTranslations('common');
 
   if (!session?.user) {
     redirect('/login');
@@ -66,24 +69,24 @@ export default async function GroupsPage({
         <div className="px-4 py-6 sm:px-0">
           <div className="flex justify-between items-center mb-6">
             <h1 className="text-3xl font-bold text-foreground">
-              Groups
+              {t('title')}
             </h1>
             {canCreate.allowed ? (
               <Link
                 href="/groups/new"
                 className="px-4 py-2 bg-primary text-white rounded-lg font-semibold hover:bg-primary-dark transition-colors shadow-lg hover:shadow-primary/50"
               >
-                Add Group
+                {t('addGroup')}
               </Link>
             ) : (
               <div className="relative group">
                 <span className="px-4 py-2 bg-gray-400 dark:bg-gray-600 text-white rounded-lg font-semibold cursor-not-allowed inline-block">
-                  Add Group
+                  {t('addGroup')}
                 </span>
                 <div className="invisible group-hover:visible absolute right-0 top-full mt-2 w-64 p-3 bg-gray-900 dark:bg-gray-700 text-white text-sm rounded-lg shadow-lg z-10">
-                  <p className="mb-2">You&apos;ve reached the limit of {canCreate.limit} groups.</p>
+                  <p className="mb-2">{t('limitReached', { limit: canCreate.limit })}</p>
                   <Link href="/settings/billing" className="text-blue-400 hover:text-blue-300 underline">
-                    Upgrade your plan
+                    {t('upgradePlan')}
                   </Link>
                 </div>
               </div>
@@ -100,9 +103,9 @@ export default async function GroupsPage({
                     </svg>
                   </div>
                 }
-                title="No groups yet"
-                description="Create groups to organize your network. Groups help you categorize people by family, friends, work, or any custom category."
-                actionLabel="Create Your First Group"
+                title={t('noGroupsYet')}
+                description={t('noGroupsDescription')}
+                actionLabel={t('createFirstGroup')}
                 actionHref="/groups/new"
               />
             </div>
@@ -110,7 +113,7 @@ export default async function GroupsPage({
             <>
               {totalPages > 1 && (
                 <div className="mb-4 text-sm text-muted">
-                  Showing {skip + 1}-{Math.min(skip + ITEMS_PER_PAGE, totalCount)} of {totalCount} groups
+                  {t('showing', { start: skip + 1, end: Math.min(skip + ITEMS_PER_PAGE, totalCount), total: totalCount })}
                 </div>
               )}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -140,9 +143,9 @@ export default async function GroupsPage({
                     </div>
                     <div className="mt-4 pt-4 border-t border-border">
                       <p className="text-sm text-muted">
-                        {group._count.people === 0 && 'No members yet'}
-                        {group._count.people === 1 && '1 member'}
-                        {group._count.people > 1 && `${group._count.people} members`}
+                        {group._count.people === 0 && t('noMembersYet')}
+                        {group._count.people === 1 && t('oneMember')}
+                        {group._count.people > 1 && t('membersCount', { count: group._count.people })}
                       </p>
                     </div>
                   </Link>
@@ -157,12 +160,12 @@ export default async function GroupsPage({
                         href={`/groups?page=${currentPage - 1}`}
                         className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-border bg-surface text-sm font-medium text-muted hover:bg-surface-elevated"
                       >
-                        <span className="sr-only">Previous</span>
+                        <span className="sr-only">{tCommon('previous')}</span>
                         ←
                       </Link>
                     ) : (
                       <span className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-border bg-surface-elevated text-sm font-medium text-gray-400 dark:text-gray-600 cursor-not-allowed">
-                        <span className="sr-only">Previous</span>
+                        <span className="sr-only">{tCommon('previous')}</span>
                         ←
                       </span>
                     )}
@@ -202,12 +205,12 @@ export default async function GroupsPage({
                         href={`/groups?page=${currentPage + 1}`}
                         className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-border bg-surface text-sm font-medium text-muted hover:bg-surface-elevated"
                       >
-                        <span className="sr-only">Next</span>
+                        <span className="sr-only">{tCommon('next')}</span>
                         →
                       </Link>
                     ) : (
                       <span className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-border bg-surface-elevated text-sm font-medium text-gray-400 dark:text-gray-600 cursor-not-allowed">
-                        <span className="sr-only">Next</span>
+                        <span className="sr-only">{tCommon('next')}</span>
                         →
                       </span>
                     )}

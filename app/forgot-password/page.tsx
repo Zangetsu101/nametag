@@ -3,8 +3,11 @@
 import { useState, FormEvent } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 
 export default function ForgotPasswordPage() {
+  const t = useTranslations('auth');
+  const tErrors = useTranslations('errors');
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
@@ -29,12 +32,12 @@ export default function ForgotPasswordPage() {
       if (response.status === 429) {
         setError(data.error);
       } else if (!response.ok) {
-        setError(data.error || 'Something went wrong');
+        setError(data.error || tErrors('server.internalError'));
       } else {
         setSuccess(true);
       }
     } catch {
-      setError('Unable to connect to server. Please check your connection and try again.');
+      setError(tErrors('server.networkError'));
     } finally {
       setIsLoading(false);
     }
@@ -55,20 +58,20 @@ export default function ForgotPasswordPage() {
           </div>
           <div className="bg-green-50 dark:bg-green-900/20 border border-green-400 dark:border-green-800 rounded-lg p-6">
             <h2 className="text-2xl font-bold text-green-700 dark:text-green-400 mb-4">
-              Check your email
+              {t('checkYourEmail')}
             </h2>
             <p className="text-green-600 dark:text-green-300 mb-4">
-              If an account exists for <strong>{email}</strong>, we&apos;ve sent a password reset link.
+              {t('passwordResetEmailSent', { email: email })}
             </p>
             <p className="text-sm text-green-600 dark:text-green-300">
-              The link will expire in 1 hour.
+              {t('resetLinkExpiry')}
             </p>
           </div>
           <Link
             href="/login"
             className="inline-block text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
           >
-            Back to login
+            {t('backToLogin')}
           </Link>
         </div>
       </div>
@@ -87,10 +90,10 @@ export default function ForgotPasswordPage() {
             priority
           />
           <h2 className="mt-6 text-center text-3xl font-bold text-foreground">
-            Forgot your password?
+            {t('forgotPasswordTitle')}
           </h2>
           <p className="mt-2 text-center text-sm text-muted">
-            Enter your email and we&apos;ll send you a reset link
+            {t('forgotPasswordSubtitle')}
           </p>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
@@ -101,7 +104,7 @@ export default function ForgotPasswordPage() {
           )}
           <div>
             <label htmlFor="email" className="sr-only">
-              Email address
+              {t('emailAddress')}
             </label>
             <input
               id="email"
@@ -112,7 +115,7 @@ export default function ForgotPasswordPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-border placeholder-gray-500 dark:placeholder-gray-400 text-foreground bg-surface focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Email address"
+              placeholder={t('emailAddress')}
             />
           </div>
 
@@ -122,18 +125,18 @@ export default function ForgotPasswordPage() {
               disabled={isLoading}
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-lg text-black bg-primary hover:bg-primary-dark shadow-lg hover:shadow-primary/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isLoading ? 'Sending...' : 'Send reset link'}
+              {isLoading ? t('sending') : t('sendResetLink')}
             </button>
           </div>
 
           <div className="text-center">
             <p className="text-sm text-muted">
-              Remember your password?{' '}
+              {t('rememberPassword')}{' '}
               <Link
                 href="/login"
                 className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
               >
-                Sign in
+                {t('signIn')}
               </Link>
             </p>
           </div>

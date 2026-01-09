@@ -6,6 +6,7 @@ import { prisma } from '@/lib/prisma';
 import UnifiedNetworkGraph from '@/components/UnifiedNetworkGraph';
 import { formatDate } from '@/lib/date-format';
 import { formatFullName } from '@/lib/nameUtils';
+import { getTranslations } from 'next-intl/server';
 
 interface UpcomingEvent {
   id: string;
@@ -61,16 +62,9 @@ function getDaysUntil(date: Date, today: Date): number {
   return Math.round((targetDate.getTime() - todayNormalized.getTime()) / (1000 * 60 * 60 * 24));
 }
 
-function formatDaysUntil(days: number): string {
-  if (days === 0) return 'Today';
-  if (days === 1) return 'Tomorrow';
-  if (days < 7) return `In ${days} days`;
-  if (days < 14) return 'In 1 week';
-  return `In ${Math.floor(days / 7)} weeks`;
-}
-
 export default async function DashboardPage() {
   const session = await auth();
+  const t = await getTranslations('dashboard');
 
   if (!session?.user) {
     redirect('/login');
@@ -181,7 +175,7 @@ export default async function DashboardPage() {
           personId: person.id,
           personName: formatFullName(person),
           type: 'contact_reminder',
-          title: 'Time to catch up',
+          title: t('timeToCatchUp'),
           date: reminderDueDate,
           daysUntil,
         });
@@ -191,6 +185,15 @@ export default async function DashboardPage() {
 
   // Sort by days until (soonest first)
   upcomingEvents.sort((a, b) => a.daysUntil - b.daysUntil);
+
+  // Helper function to format days until
+  const formatDaysUntil = (days: number): string => {
+    if (days === 0) return t('today');
+    if (days === 1) return t('tomorrow');
+    if (days < 7) return t('inDays', { days });
+    if (days < 14) return t('inWeek');
+    return t('inWeeks', { weeks: Math.floor(days / 7) });
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -208,7 +211,7 @@ export default async function DashboardPage() {
             <div className="bg-surface shadow-lg rounded-lg p-6 mb-8 border-2 border-primary/30 relative overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none"></div>
               <h2 className="text-xl font-bold text-primary mb-4 relative">
-                Upcoming Events
+                {t('upcomingEvents')}
               </h2>
               <div className="space-y-3 relative">
                 {upcomingEvents.map((event) => (
@@ -246,7 +249,7 @@ export default async function DashboardPage() {
                           ? 'text-secondary'
                           : 'text-primary'
                       }`}>
-                        {event.daysUntil < 0 ? 'Overdue' : formatDaysUntil(event.daysUntil)}
+                        {event.daysUntil < 0 ? t('overdue') : formatDaysUntil(event.daysUntil)}
                       </div>
                       <div className="text-xs text-muted/80">
                         {formatDate(event.date, dateFormat)}
@@ -263,7 +266,7 @@ export default async function DashboardPage() {
             <div className="bg-surface shadow-lg rounded-lg p-6 mb-8 border-2 border-primary/30 relative overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none"></div>
               <h2 className="text-xl font-bold text-primary mb-4 relative">
-                Your Network
+                {t('yourNetwork')}
               </h2>
               <div className="relative">
                 <UnifiedNetworkGraph
@@ -287,16 +290,16 @@ export default async function DashboardPage() {
                   </div>
                 </div>
                 <h3 className="text-xl font-bold text-foreground mb-3">
-                  Your network is empty
+                  {t('emptyNetwork.title')}
                 </h3>
                 <p className="text-base text-muted mb-8 max-w-md mx-auto">
-                  Start building your personal network by adding people you know.
+                  {t('emptyNetwork.description')}
                 </p>
                 <Link
                   href="/people/new"
                   className="inline-flex items-center px-6 py-3 border border-transparent text-base font-semibold rounded-lg shadow-lg bg-primary hover:bg-primary-dark text-black transition-all hover:shadow-primary/50 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
                 >
-                  Create your first person
+                  {t('emptyNetwork.action')}
                 </Link>
               </div>
             </div>

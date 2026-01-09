@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { prisma } from '@/lib/prisma';
 import GroupForm from '@/components/GroupForm';
 import Navigation from '@/components/Navigation';
+import { getTranslations } from 'next-intl/server';
 
 export default async function EditGroupPage({
   params,
@@ -11,6 +12,7 @@ export default async function EditGroupPage({
   params: Promise<{ id: string }>;
 }) {
   const session = await auth();
+  const t = await getTranslations('groups');
 
   if (!session?.user) {
     redirect('/login');
@@ -45,12 +47,12 @@ export default async function EditGroupPage({
               href={`/groups/${group.id}`}
               className="text-blue-600 dark:text-blue-400 hover:underline text-sm"
             >
-              ← Back to {group.name}
+              {t('backToGroup', { name: group.name })}
             </Link>
           </div>
 
           <h1 className="text-3xl font-bold text-foreground mb-6">
-            Edit {group.name}
+            {t('editGroupName', { name: group.name })}
           </h1>
 
           <div className="bg-surface shadow rounded-lg p-6">

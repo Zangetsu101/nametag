@@ -11,8 +11,10 @@ import ApplyPromoForm from '@/components/billing/ApplyPromoForm';
 import PaymentHistoryTable from '@/components/billing/PaymentHistoryTable';
 import BillingActions from '@/components/billing/BillingActions';
 import BillingToast from '@/components/billing/BillingToast';
+import { getTranslations } from 'next-intl/server';
 
 export default async function BillingSettingsPage() {
+  const t = await getTranslations('settings.billing');
   // Billing is only available in SaaS mode
   if (!isSaasMode()) {
     redirect('/settings/profile');
@@ -58,10 +60,10 @@ export default async function BillingSettingsPage() {
         <div className="flex items-start justify-between mb-4">
           <div>
             <h2 className="text-xl font-bold text-foreground">
-              Current Plan
+              {t('currentPlan')}
             </h2>
             <p className="text-muted mt-1">
-              Manage your subscription and billing
+              {t('manageSubscription')}
             </p>
           </div>
           <div className="text-right">
@@ -82,7 +84,7 @@ export default async function BillingSettingsPage() {
         {/* Plan details */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           <div>
-            <p className="text-sm text-muted">Plan</p>
+            <p className="text-sm text-muted">{t('plan')}</p>
             <p className="text-lg font-medium text-foreground">
               {tierInfo.name}
               {subscriptionData.subscription?.billingFrequency && (
@@ -96,8 +98,8 @@ export default async function BillingSettingsPage() {
             <div>
               <p className="text-sm text-muted">
                 {subscriptionData.subscription.cancelAtPeriodEnd
-                  ? 'Access until'
-                  : 'Next billing date'}
+                  ? t('accessUntil')
+                  : t('nextBillingDate')}
               </p>
               <p className="text-lg font-medium text-foreground">
                 {formatDate(subscriptionData.subscription.currentPeriodEnd)}
@@ -124,11 +126,11 @@ export default async function BillingSettingsPage() {
                 />
               </svg>
               <span className="font-medium text-purple-800 dark:text-purple-400">
-                Complimentary PRO Access
+                {t('complimentaryAccess')}
               </span>
             </div>
             <p className="text-sm text-purple-600 dark:text-purple-400 mt-1">
-              You have been granted free unlimited access to all PRO features. No payment required.
+              {t('complimentaryMessage')}
             </p>
           </div>
         )}
@@ -159,7 +161,7 @@ export default async function BillingSettingsPage() {
             </div>
             {subscriptionData.promotionExpiry && (
               <p className="text-sm text-green-600 dark:text-green-400 mt-1">
-                Expires {formatDate(subscriptionData.promotionExpiry)}
+                {t('promotionExpires', { date: formatDate(subscriptionData.promotionExpiry) || '' })}
               </p>
             )}
           </div>
@@ -177,23 +179,23 @@ export default async function BillingSettingsPage() {
       {/* Usage */}
       <div className="bg-surface shadow rounded-lg p-6">
         <h2 className="text-xl font-bold text-foreground mb-4">
-          Usage
+          {t('usage')}
         </h2>
         <div className="space-y-4">
           <UsageMeter
-            label="People"
+            label={t('people')}
             current={subscriptionData.limits.people.current}
             limit={subscriptionData.limits.people.limit}
             isUnlimited={subscriptionData.limits.people.isUnlimited}
           />
           <UsageMeter
-            label="Groups"
+            label={t('groups')}
             current={subscriptionData.limits.groups.current}
             limit={subscriptionData.limits.groups.limit}
             isUnlimited={subscriptionData.limits.groups.isUnlimited}
           />
           <UsageMeter
-            label="Reminders"
+            label={t('reminders')}
             current={subscriptionData.limits.reminders.current}
             limit={subscriptionData.limits.reminders.limit}
             isUnlimited={subscriptionData.limits.reminders.isUnlimited}
@@ -205,7 +207,7 @@ export default async function BillingSettingsPage() {
       {!isComplimentary && !subscriptionData.subscription?.promotion && (
         <div className="bg-surface shadow rounded-lg p-6">
           <h2 className="text-xl font-bold text-foreground mb-4">
-            Have a Promotion Code?
+            {t('havePromoCode')}
           </h2>
           <ApplyPromoForm hasActivePromo={!!subscriptionData.subscription?.promotion} />
         </div>
@@ -215,7 +217,7 @@ export default async function BillingSettingsPage() {
       {!isComplimentary && (
         <div className="bg-surface shadow rounded-lg p-6">
           <h2 className="text-xl font-bold text-foreground mb-6">
-            Available Plans
+            {t('availablePlans')}
           </h2>
           <PricingTable
             currentTier={tier}
@@ -228,7 +230,7 @@ export default async function BillingSettingsPage() {
       {payments.length > 0 && (
         <div className="bg-surface shadow rounded-lg p-6">
           <h2 className="text-xl font-bold text-foreground mb-4">
-            Payment History
+            {t('paymentHistory')}
           </h2>
           <PaymentHistoryTable
             payments={payments.map((p) => ({

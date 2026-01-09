@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 import NavigationSearch from './NavigationSearch';
 import UserMenu from './UserMenu';
 
@@ -15,6 +16,8 @@ interface NavigationProps {
 
 export default function Navigation({ userEmail, userName, userNickname, currentPath }: NavigationProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const tNav = useTranslations('nav');
+  const tCommon = useTranslations('common');
 
   // Lock body scroll when mobile menu is open
   useEffect(() => {
@@ -31,10 +34,10 @@ export default function Navigation({ userEmail, userName, userNickname, currentP
   }, [mobileMenuOpen]);
 
   const navItems = [
-    { href: '/dashboard', label: 'Dashboard' },
-    { href: '/people', label: 'People', createHref: '/people/new', createLabel: 'person' },
-    { href: '/groups', label: 'Groups', createHref: '/groups/new', createLabel: 'group' },
-    { href: '/relationship-types', label: 'Relationships', createHref: '/relationship-types/new', createLabel: 'relationship' },
+    { href: '/dashboard', labelKey: 'dashboard' },
+    { href: '/people', labelKey: 'people', createHref: '/people/new', createLabelKey: 'people' },
+    { href: '/groups', labelKey: 'groups', createHref: '/groups/new', createLabelKey: 'groups' },
+    { href: '/relationship-types', labelKey: 'relationshipTypes', createHref: '/relationship-types/new', createLabelKey: 'relationshipTypes' },
   ];
 
   const isActive = (href: string) => {
@@ -82,7 +85,7 @@ export default function Navigation({ userEmail, userName, userNickname, currentP
                             : 'text-foreground'
                         }`}
                       >
-                        {item.label}
+                        {tNav(item.labelKey)}
                       </Link>
                       <div className={`w-px h-5 ${
                         isActive(item.href)
@@ -96,8 +99,8 @@ export default function Navigation({ userEmail, userName, userNickname, currentP
                             ? 'text-primary hover:text-primary-dark'
                             : 'text-muted hover:text-primary'
                         }`}
-                        title={`Create new ${item.createLabel}`}
-                        aria-label={`Create new ${item.createLabel}`}
+                        title={`${tCommon('create')} ${tNav(item.createLabelKey || item.labelKey)}`}
+                        aria-label={`${tCommon('create')} ${tNav(item.createLabelKey || item.labelKey)}`}
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -114,7 +117,7 @@ export default function Navigation({ userEmail, userName, userNickname, currentP
                             : 'text-foreground bg-surface-elevated border-border hover:bg-surface-elevated hover:border-primary/50'
                         }`}
                       >
-                        {item.label}
+                        {tNav(item.labelKey)}
                       </Link>
                     </div>
                   )}
@@ -205,7 +208,7 @@ export default function Navigation({ userEmail, userName, userNickname, currentP
                                 : 'text-foreground'
                             }`}
                           >
-                            {item.label}
+                            {tNav(item.labelKey)}
                           </Link>
                           <div className={`w-px h-8 ${
                             isActive(item.href)
@@ -220,8 +223,8 @@ export default function Navigation({ userEmail, userName, userNickname, currentP
                                 ? 'text-primary'
                                 : 'text-muted hover:text-primary'
                             }`}
-                            title={`Create new ${item.createLabel}`}
-                            aria-label={`Create new ${item.createLabel}`}
+                            title={`${tCommon('create')} ${tNav(item.createLabelKey || item.labelKey)}`}
+                            aria-label={`${tCommon('create')} ${tNav(item.createLabelKey || item.labelKey)}`}
                           >
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -238,7 +241,7 @@ export default function Navigation({ userEmail, userName, userNickname, currentP
                               : 'text-foreground bg-surface-elevated border-border hover:bg-surface-elevated hover:border-primary/50'
                           }`}
                         >
-                          {item.label}
+                          {tNav(item.labelKey)}
                         </Link>
                       )}
                     </div>

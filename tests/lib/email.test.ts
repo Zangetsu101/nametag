@@ -160,7 +160,7 @@ describe('email', () => {
       it('should generate verification email', async () => {
         const { emailTemplates } = await import('../../lib/email');
 
-        const template = emailTemplates.accountVerification('https://example.com/verify?token=abc');
+        const template = await emailTemplates.accountVerification('https://example.com/verify?token=abc');
 
         expect(template.subject).toBe('Verify your Nametag account');
         expect(template.html).toContain('Welcome to Nametag');
@@ -173,7 +173,7 @@ describe('email', () => {
       it('should generate reminder email', async () => {
         const { emailTemplates } = await import('../../lib/email');
 
-        const template = emailTemplates.importantDateReminder('John Doe', 'Birthday', 'March 15');
+        const template = await emailTemplates.importantDateReminder('John Doe', 'Birthday', 'March 15');
 
         expect(template.subject).toContain('John Doe');
         expect(template.subject).toContain('Birthday');
@@ -188,7 +188,7 @@ describe('email', () => {
       it('should generate contact reminder with last contact date', async () => {
         const { emailTemplates } = await import('../../lib/email');
 
-        const template = emailTemplates.contactReminder('Jane Smith', 'January 1, 2024', '2 weeks');
+        const template = await emailTemplates.contactReminder('Jane Smith', 'January 1, 2024', '2 weeks');
 
         expect(template.subject).toContain('Jane Smith');
         expect(template.html).toContain('Jane Smith');
@@ -200,7 +200,7 @@ describe('email', () => {
       it('should handle null last contact date', async () => {
         const { emailTemplates } = await import('../../lib/email');
 
-        const template = emailTemplates.contactReminder('Jane Smith', null, '1 month');
+        const template = await emailTemplates.contactReminder('Jane Smith', null, '1 month');
 
         expect(template.html).toContain('Jane Smith');
         expect(template.html).not.toContain('last contact:');
@@ -212,7 +212,7 @@ describe('email', () => {
       it('should generate password reset email', async () => {
         const { emailTemplates } = await import('../../lib/email');
 
-        const template = emailTemplates.passwordReset('https://example.com/reset?token=xyz');
+        const template = await emailTemplates.passwordReset('https://example.com/reset?token=xyz');
 
         expect(template.subject).toBe('Reset your Nametag password');
         expect(template.html).toContain('Password Reset');

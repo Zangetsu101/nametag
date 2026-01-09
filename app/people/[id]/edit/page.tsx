@@ -6,6 +6,7 @@ import PersonForm from '@/components/PersonForm';
 import Navigation from '@/components/Navigation';
 import { formatFullName } from '@/lib/nameUtils';
 import { canEnableReminder } from '@/lib/billing/subscription';
+import { getTranslations } from 'next-intl/server';
 
 export default async function EditPersonPage({
   params,
@@ -13,6 +14,7 @@ export default async function EditPersonPage({
   params: Promise<{ id: string }>;
 }) {
   const session = await auth();
+  const t = await getTranslations('people');
 
   if (!session?.user) {
     redirect('/login');
@@ -75,12 +77,12 @@ export default async function EditPersonPage({
               href={`/people/${person.id}`}
               className="text-blue-600 dark:text-blue-400 hover:underline text-sm"
             >
-              ← Back to {formatFullName(person)}
+              {t('backToPerson', { name: formatFullName(person) })}
             </Link>
           </div>
 
           <h1 className="text-3xl font-bold text-foreground mb-6">
-            Edit {formatFullName(person)}
+            {t('editPerson', { name: formatFullName(person) })}
           </h1>
 
           <div className="bg-surface shadow rounded-lg p-6">

@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
+import { NextIntlClientProvider } from 'next-intl';
+import { getMessages } from 'next-intl/server';
 import SessionProvider from "@/components/SessionProvider";
 import ThemeProvider from "@/components/ThemeProvider";
 import { Toaster } from "sonner";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { getUserLocale } from "@/lib/locale";
 import "./globals.css";
 
 // Use system fonts instead of Google Fonts to avoid network calls during Docker build
@@ -33,15 +36,21 @@ export default async function RootLayout({
     }
   }
 
+  // Get locale and messages for i18n
+  const locale = await getUserLocale(session?.user?.id);
+  const messages = await getMessages();
+
   return (
-    <html lang="en" className={initialTheme === 'DARK' ? 'dark' : ''}>
+    <html lang={locale} className={initialTheme === 'DARK' ? 'dark' : ''}>
       <body className="antialiased">
-        <SessionProvider>
-          <ThemeProvider initialTheme={initialTheme}>
-            {children}
-          </ThemeProvider>
-        </SessionProvider>
-        <Toaster position="top-right" richColors />
+        <NextIntlClientProvider messages={messages} locale={locale}>
+          <SessionProvider>
+            <ThemeProvider initialTheme={initialTheme}>
+              {children}
+            </ThemeProvider>
+          </SessionProvider>
+          <Toaster position="top-right" richColors />
+        </NextIntlClientProvider>
       </body>
     </html>
   );

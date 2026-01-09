@@ -3,11 +3,16 @@
 import { useState, FormEvent, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 import { PasswordStrengthIndicator } from '@/components/PasswordStrengthIndicator';
 import { GoogleSignInButton } from '@/components/GoogleSignInButton';
 import { fetchAvailableProviders } from '@/lib/client-features';
 
 export default function RegisterPage() {
+  const t = useTranslations('auth');
+  const tCommon = useTranslations('common');
+  const tErrors = useTranslations('errors');
+  const tValidation = useTranslations('validation');
   const [name, setName] = useState('');
   const [surname, setSurname] = useState('');
   const [nickname, setNickname] = useState('');
@@ -33,29 +38,29 @@ export default function RegisterPage() {
     setValidationErrors([]);
 
     if (password !== confirmPassword) {
-      setError('Passwords do not match');
+      setError(tValidation('passwordsDoNotMatch'));
       return;
     }
 
     // Client-side password validation (matches backend requirements)
     if (password.length < 8) {
-      setError('Password must be at least 8 characters');
+      setError(tErrors('password.tooShort', { min: '8' }));
       return;
     }
     if (!/[A-Z]/.test(password)) {
-      setError('Password must contain at least one uppercase letter');
+      setError(tErrors('password.requiresUppercase'));
       return;
     }
     if (!/[a-z]/.test(password)) {
-      setError('Password must contain at least one lowercase letter');
+      setError(tErrors('password.requiresLowercase'));
       return;
     }
     if (!/[0-9]/.test(password)) {
-      setError('Password must contain at least one number');
+      setError(tErrors('password.requiresNumber'));
       return;
     }
     if (!/[^A-Za-z0-9]/.test(password)) {
-      setError('Password must contain at least one special character (!@#$%^&*)');
+      setError(tErrors('password.requiresSpecial'));
       return;
     }
 
@@ -76,9 +81,9 @@ export default function RegisterPage() {
         // Check if there are detailed validation errors
         if (data.details && Array.isArray(data.details)) {
           setValidationErrors(data.details);
-          setError(data.error || 'Please fix the errors below');
+          setError(data.error || tErrors('server.internalError'));
         } else {
-          setError(data.error || 'Something went wrong');
+          setError(data.error || tErrors('server.internalError'));
         }
         return;
       }
@@ -86,7 +91,7 @@ export default function RegisterPage() {
       // Show success message instead of auto-login
       setSuccess(true);
     } catch (error) {
-      setError('Unable to connect to server. Please check your connection and try again.');
+      setError(tErrors('server.networkError'));
     } finally {
       setIsLoading(false);
     }
@@ -98,20 +103,20 @@ export default function RegisterPage() {
         <div className="max-w-md w-full space-y-8 text-center">
           <div className="bg-green-50 dark:bg-green-900/20 border border-green-400 dark:border-green-800 rounded-lg p-6">
             <h2 className="text-2xl font-bold text-green-700 dark:text-green-400 mb-4">
-              Check your email
+              {t('checkYourEmail')}
             </h2>
             <p className="text-green-600 dark:text-green-300 mb-4">
-              We&apos;ve sent a verification link to <strong>{email}</strong>.
+              {t('verificationEmailSent', { email: email })}
             </p>
             <p className="text-sm text-green-600 dark:text-green-300">
-              Please click the link in the email to verify your account before logging in.
+              {t('verificationEmailInstructions')}
             </p>
           </div>
           <Link
             href="/login"
             className="inline-block text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
           >
-            Go to login page
+            {t('goToLogin')}
           </Link>
         </div>
       </div>
@@ -130,10 +135,10 @@ export default function RegisterPage() {
             priority
           />
           <h2 className="mt-6 text-center text-3xl font-bold text-foreground">
-            Create your account
+            {t('createAccountTitle')}
           </h2>
           <p className="mt-2 text-center text-sm text-muted">
-            Start managing your relationships with Nametag
+            {t('createAccountSubtitle')}
           </p>
         </div>
 
@@ -146,7 +151,7 @@ export default function RegisterPage() {
               </div>
               <div className="relative flex justify-center text-sm">
                 <span className="px-2 bg-background text-muted">
-                  Or sign up with email
+                  {t('orSignUpWithEmail')}
                 </span>
               </div>
             </div>
@@ -171,7 +176,7 @@ export default function RegisterPage() {
           <div className="rounded-md shadow-sm space-y-4">
             <div>
               <label htmlFor="name" className="sr-only">
-                Name
+                {tCommon('name')}
               </label>
               <input
                 id="name"
@@ -181,12 +186,12 @@ export default function RegisterPage() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-border placeholder-gray-500 dark:placeholder-gray-400 text-foreground bg-surface focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Name *"
+                placeholder={t('namePlaceholder')}
               />
             </div>
             <div>
               <label htmlFor="surname" className="sr-only">
-                Surname
+                {t('surname')}
               </label>
               <input
                 id="surname"
@@ -195,12 +200,12 @@ export default function RegisterPage() {
                 value={surname}
                 onChange={(e) => setSurname(e.target.value)}
                 className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-border placeholder-gray-500 dark:placeholder-gray-400 text-foreground bg-surface focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Surname (optional)"
+                placeholder={t('surnamePlaceholder')}
               />
             </div>
             <div>
               <label htmlFor="nickname" className="sr-only">
-                Nickname
+                {t('nickname')}
               </label>
               <input
                 id="nickname"
@@ -209,12 +214,12 @@ export default function RegisterPage() {
                 value={nickname}
                 onChange={(e) => setNickname(e.target.value)}
                 className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-border placeholder-gray-500 dark:placeholder-gray-400 text-foreground bg-surface focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Nickname (optional)"
+                placeholder={t('nicknamePlaceholder')}
               />
             </div>
             <div>
               <label htmlFor="email" className="sr-only">
-                Email address
+                {t('emailAddress')}
               </label>
               <input
                 id="email"
@@ -225,12 +230,12 @@ export default function RegisterPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-border placeholder-gray-500 dark:placeholder-gray-400 text-foreground bg-surface focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Email address"
+                placeholder={t('emailAddress')}
               />
             </div>
             <div className="space-y-2">
               <label htmlFor="password" className="sr-only">
-                Password
+                {t('password')}
               </label>
               <input
                 id="password"
@@ -241,13 +246,13 @@ export default function RegisterPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-border placeholder-gray-500 dark:placeholder-gray-400 text-foreground bg-surface focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Password"
+                placeholder={t('password')}
               />
               <PasswordStrengthIndicator password={password} showRequirements={true} />
             </div>
             <div>
               <label htmlFor="confirmPassword" className="sr-only">
-                Confirm Password
+                {t('confirmPassword')}
               </label>
               <input
                 id="confirmPassword"
@@ -258,7 +263,7 @@ export default function RegisterPage() {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-border placeholder-gray-500 dark:placeholder-gray-400 text-foreground bg-surface focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Confirm password"
+                placeholder={t('confirmPasswordPlaceholder')}
               />
             </div>
           </div>
@@ -269,18 +274,18 @@ export default function RegisterPage() {
               disabled={isLoading}
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-semibold rounded-lg text-black bg-primary hover:bg-primary-dark transition-colors shadow-lg hover:shadow-primary/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isLoading ? 'Creating account...' : 'Sign up'}
+              {isLoading ? t('creatingAccount') : t('signUp')}
             </button>
           </div>
 
           <div className="text-center">
             <p className="text-sm text-muted">
-              Already have an account?{' '}
+              {t('alreadyHaveAccount')}{' '}
               <Link
                 href="/login"
                 className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
               >
-                Sign in
+                {t('signIn')}
               </Link>
             </p>
           </div>

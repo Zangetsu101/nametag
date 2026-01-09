@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { prisma } from '@/lib/prisma';
 import RelationshipTypeForm from '@/components/RelationshipTypeForm';
 import Navigation from '@/components/Navigation';
+import { getTranslations } from 'next-intl/server';
 
 export default async function EditRelationshipTypePage({
   params,
@@ -11,6 +12,7 @@ export default async function EditRelationshipTypePage({
   params: Promise<{ id: string }>;
 }) {
   const session = await auth();
+  const t = await getTranslations('relationshipTypes');
 
   if (!session?.user) {
     redirect('/login');
@@ -70,13 +72,13 @@ export default async function EditRelationshipTypePage({
               href="/relationship-types"
               className="text-blue-600 dark:text-blue-400 hover:underline text-sm"
             >
-              ← Back to Relationship Types
+              {t('backToTypes')}
             </Link>
           </div>
 
           <div className="bg-surface shadow rounded-lg p-6">
             <h1 className="text-2xl font-bold text-foreground mb-6">
-              Edit Relationship Type
+              {t('editType')}
             </h1>
             <RelationshipTypeForm
               relationshipType={relationshipType}

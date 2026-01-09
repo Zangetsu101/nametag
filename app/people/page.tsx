@@ -7,6 +7,7 @@ import EmptyState from '@/components/EmptyState';
 import { formatDate } from '@/lib/date-format';
 import { formatFullName } from '@/lib/nameUtils';
 import { canCreateResource } from '@/lib/billing/subscription';
+import { getTranslations } from 'next-intl/server';
 
 const ITEMS_PER_PAGE = 50;
 
@@ -16,6 +17,8 @@ export default async function PeoplePage({
   searchParams: Promise<{ page?: string; sortBy?: string; order?: string }>;
 }) {
   const session = await auth();
+  const t = await getTranslations('people');
+  const tCommon = await getTranslations('common');
 
   if (!session?.user) {
     redirect('/login');
@@ -155,24 +158,24 @@ export default async function PeoplePage({
         <div className="px-4 py-6 sm:px-0">
           <div className="flex justify-between items-center mb-6">
             <h1 className="text-3xl font-bold text-foreground">
-              People
+              {t('title')}
             </h1>
             {canCreate.allowed ? (
               <Link
                 href="/people/new"
                 className="px-4 py-2 bg-primary text-white rounded-lg font-semibold hover:bg-primary-dark transition-colors shadow-lg hover:shadow-primary/50"
               >
-                Add Person
+                {t('addPerson')}
               </Link>
             ) : (
               <div className="relative group">
                 <span className="px-4 py-2 bg-gray-400 dark:bg-gray-600 text-white rounded-lg font-semibold cursor-not-allowed inline-block">
-                  Add Person
+                  {t('addPerson')}
                 </span>
                 <div className="invisible group-hover:visible absolute right-0 top-full mt-2 w-64 p-3 bg-gray-900 dark:bg-gray-700 text-white text-sm rounded-lg shadow-lg z-10">
-                  <p className="mb-2">You&apos;ve reached the limit of {canCreate.limit} people.</p>
+                  <p className="mb-2">{t('limitReached', { limit: canCreate.limit })}</p>
                   <Link href="/settings/billing" className="text-primary hover:text-primary-dark underline">
-                    Upgrade your plan
+                    {t('upgradePlan')}
                   </Link>
                 </div>
               </div>
@@ -189,16 +192,16 @@ export default async function PeoplePage({
                     </svg>
                   </div>
                 }
-                title="No people yet"
-                description="Start building your network by adding people you know. You can track their details, relationships, and stay connected."
-                actionLabel="Add Your First Person"
+                title={t('noPeopleYet')}
+                description={t('noPeopleDescription')}
+                actionLabel={t('addFirstPerson')}
                 actionHref="/people/new"
               />
             </div>
           ) : (
             <>
               <div className="mb-4 text-sm text-muted">
-                Showing {skip + 1}-{Math.min(skip + ITEMS_PER_PAGE, totalCount)} of {totalCount} people
+                {t('showing', { start: skip + 1, end: Math.min(skip + ITEMS_PER_PAGE, totalCount), total: totalCount })}
               </div>
             <div className="bg-surface shadow-lg rounded-lg overflow-hidden border-2 border-primary/30">
               <div className="overflow-x-auto">
@@ -210,7 +213,7 @@ export default async function PeoplePage({
                         href={`/people?sortBy=name&order=${sortBy === 'name' && order === 'asc' ? 'desc' : 'asc'}&page=${currentPage}`}
                         className="flex items-center gap-1 hover:text-foreground"
                       >
-                        Name
+                        {tCommon('name')}
                         {sortBy === 'name' && (
                           <span className="text-primary">
                             {order === 'asc' ? '↑' : '↓'}
@@ -223,7 +226,7 @@ export default async function PeoplePage({
                         href={`/people?sortBy=surname&order=${sortBy === 'surname' && order === 'asc' ? 'desc' : 'asc'}&page=${currentPage}`}
                         className="flex items-center gap-1 hover:text-foreground"
                       >
-                        Surname
+                        {t('surname')}
                         {sortBy === 'surname' && (
                           <span className="text-primary">
                             {order === 'asc' ? '↑' : '↓'}
@@ -236,7 +239,7 @@ export default async function PeoplePage({
                         href={`/people?sortBy=nickname&order=${sortBy === 'nickname' && order === 'asc' ? 'desc' : 'asc'}&page=${currentPage}`}
                         className="flex items-center gap-1 hover:text-foreground"
                       >
-                        Nickname
+                        {t('nickname')}
                         {sortBy === 'nickname' && (
                           <span className="text-primary">
                             {order === 'asc' ? '↑' : '↓'}
@@ -249,7 +252,7 @@ export default async function PeoplePage({
                         href={`/people?sortBy=relationship&order=${sortBy === 'relationship' && order === 'asc' ? 'desc' : 'asc'}&page=${currentPage}`}
                         className="flex items-center gap-1 hover:text-foreground"
                       >
-                        Relationship
+                        {t('relationshipToUser')}
                         {sortBy === 'relationship' && (
                           <span className="text-primary">
                             {order === 'asc' ? '↑' : '↓'}
@@ -262,7 +265,7 @@ export default async function PeoplePage({
                         href={`/people?sortBy=group&order=${sortBy === 'group' && order === 'asc' ? 'desc' : 'asc'}&page=${currentPage}`}
                         className="flex items-center gap-1 hover:text-foreground"
                       >
-                        Groups
+                        {t('groups')}
                         {sortBy === 'group' && (
                           <span className="text-primary">
                             {order === 'asc' ? '↑' : '↓'}
@@ -275,7 +278,7 @@ export default async function PeoplePage({
                         href={`/people?sortBy=lastContact&order=${sortBy === 'lastContact' && order === 'asc' ? 'desc' : 'asc'}&page=${currentPage}`}
                         className="flex items-center gap-1 hover:text-foreground"
                       >
-                        Last Contact
+                        {t('lastContact')}
                         {sortBy === 'lastContact' && (
                           <span className="text-primary">
                             {order === 'asc' ? '↑' : '↓'}
@@ -284,7 +287,7 @@ export default async function PeoplePage({
                       </Link>
                     </th>
                     <th className="px-6 py-3 text-right text-xs font-medium text-muted uppercase tracking-wider">
-                      Actions
+                      {t('actions')}
                     </th>
                   </tr>
                 </thead>
@@ -308,7 +311,7 @@ export default async function PeoplePage({
                             <span className="relative group cursor-help">
                               <span className="text-yellow-500">⚠️</span>
                               <span className="invisible group-hover:visible absolute left-1/2 -translate-x-1/2 bottom-full mb-2 px-3 py-2 text-xs text-white bg-gray-900 dark:bg-gray-700 rounded-lg whitespace-normal max-w-xs z-50 shadow-lg">
-                                This person has no relationships and will be shown as isolated in the network graph
+                                {t('orphanWarning')}
                                 <span className="absolute top-full left-1/2 -translate-x-1/2 -mt-px border-4 border-transparent border-t-gray-900 dark:border-t-gray-700"></span>
                               </span>
                             </span>
@@ -336,7 +339,7 @@ export default async function PeoplePage({
                           </span>
                         ) : (
                           <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium text-muted bg-surface-elevated">
-                            Indirect
+                            {t('indirect')}
                           </span>
                         )}
                       </td>
@@ -373,7 +376,7 @@ export default async function PeoplePage({
                           <Link
                             href={`/people/${person.id}/edit`}
                             className="text-primary hover:text-primary-dark transition-colors"
-                            title="Edit"
+                            title={tCommon('edit')}
                           >
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -382,7 +385,7 @@ export default async function PeoplePage({
                           <Link
                             href={`/people/${person.id}`}
                             className="text-muted hover:text-foreground transition-colors"
-                            title="View"
+                            title={tCommon('view')}
                           >
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -407,11 +410,11 @@ export default async function PeoplePage({
                           href={buildUrl(currentPage - 1)}
                           className="relative inline-flex items-center px-4 py-2 border border-border text-sm font-medium rounded-md text-foreground bg-surface-elevated hover:bg-surface-elevated/80 transition-colors"
                         >
-                          Previous
+                          {tCommon('previous')}
                         </Link>
                       ) : (
                         <span className="relative inline-flex items-center px-4 py-2 border border-border text-sm font-medium rounded-md text-muted bg-surface cursor-not-allowed">
-                          Previous
+                          {tCommon('previous')}
                         </span>
                       )}
                       {currentPage < totalPages ? (
@@ -419,18 +422,18 @@ export default async function PeoplePage({
                           href={buildUrl(currentPage + 1)}
                           className="ml-3 relative inline-flex items-center px-4 py-2 border border-border text-sm font-medium rounded-md text-foreground bg-surface-elevated hover:bg-surface-elevated/80 transition-colors"
                         >
-                          Next
+                          {tCommon('next')}
                         </Link>
                       ) : (
                         <span className="ml-3 relative inline-flex items-center px-4 py-2 border border-border text-sm font-medium rounded-md text-muted bg-surface cursor-not-allowed">
-                          Next
+                          {tCommon('next')}
                         </span>
                       )}
                     </div>
                     <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
                       <div>
                         <p className="text-sm text-foreground">
-                          Page <span className="font-medium">{currentPage}</span> of{' '}
+                          {t('page')} <span className="font-medium">{currentPage}</span> {t('of')}{' '}
                           <span className="font-medium">{totalPages}</span>
                         </p>
                       </div>
@@ -441,12 +444,12 @@ export default async function PeoplePage({
                               href={buildUrl(currentPage - 1)}
                               className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-border bg-surface-elevated text-sm font-medium text-foreground hover:bg-surface-elevated/80 transition-colors"
                             >
-                              <span className="sr-only">Previous</span>
+                              <span className="sr-only">{tCommon('previous')}</span>
                               ←
                             </Link>
                           ) : (
                             <span className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-border bg-surface text-sm font-medium text-muted cursor-not-allowed">
-                              <span className="sr-only">Previous</span>
+                              <span className="sr-only">{tCommon('previous')}</span>
                               ←
                             </span>
                           )}
@@ -486,12 +489,12 @@ export default async function PeoplePage({
                               href={buildUrl(currentPage + 1)}
                               className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-border bg-surface-elevated text-sm font-medium text-foreground hover:bg-surface-elevated/80 transition-colors"
                             >
-                              <span className="sr-only">Next</span>
+                              <span className="sr-only">{tCommon('next')}</span>
                               →
                             </Link>
                           ) : (
                             <span className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-border bg-surface text-sm font-medium text-muted cursor-not-allowed">
-                              <span className="sr-only">Next</span>
+                              <span className="sr-only">{tCommon('next')}</span>
                               →
                             </span>
                           )}

@@ -4,9 +4,11 @@ import Link from 'next/link';
 import { prisma } from '@/lib/prisma';
 import RelationshipTypeForm from '@/components/RelationshipTypeForm';
 import Navigation from '@/components/Navigation';
+import { getTranslations } from 'next-intl/server';
 
 export default async function NewRelationshipTypePage() {
   const session = await auth();
+  const t = await getTranslations('relationshipTypes');
 
   if (!session?.user) {
     redirect('/login');
@@ -43,13 +45,13 @@ export default async function NewRelationshipTypePage() {
               href="/relationship-types"
               className="text-primary hover:underline text-sm"
             >
-              ← Back to Relationship Types
+              {t('backToTypes')}
             </Link>
           </div>
 
           <div className="bg-surface shadow rounded-lg p-6">
             <h1 className="text-2xl font-bold text-foreground mb-6">
-              Create Relationship Type
+              {t('createRelationshipType')}
             </h1>
             <RelationshipTypeForm availableTypes={availableTypes} mode="create" />
           </div>

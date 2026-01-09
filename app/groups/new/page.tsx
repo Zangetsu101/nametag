@@ -6,9 +6,11 @@ import Navigation from '@/components/Navigation';
 import LimitReachedMessage from '@/components/LimitReachedMessage';
 import { canCreateResource } from '@/lib/billing/subscription';
 import { TIER_INFO } from '@/lib/billing/constants';
+import { getTranslations } from 'next-intl/server';
 
 export default async function NewGroupPage() {
   const session = await auth();
+  const t = await getTranslations('groups');
 
   if (!session?.user) {
     redirect('/login');
@@ -47,7 +49,7 @@ export default async function NewGroupPage() {
       <main className="max-w-3xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
           <h1 className="text-3xl font-bold text-foreground mb-6">
-            Create New Group
+            {t('createNewGroup')}
           </h1>
 
           {!usageCheck.allowed ? (

@@ -5,11 +5,16 @@ import { useRouter } from 'next/navigation';
 import { useState, FormEvent, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 import { GoogleSignInButton } from '@/components/GoogleSignInButton';
 import { fetchAvailableProviders } from '@/lib/client-features';
 
 export default function LoginPage() {
   const router = useRouter();
+  const t = useTranslations('auth');
+  const tCommon = useTranslations('common');
+  const tErrors = useTranslations('errors');
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -60,16 +65,16 @@ export default function LoginPage() {
 
         if (!verified) {
           setIsUnverified(true);
-          setError('Please verify your email before logging in.');
+          setError(tErrors('auth.emailNotVerified'));
         } else {
-          setError('Invalid email or password');
+          setError(tErrors('auth.invalidCredentials'));
         }
       } else {
         router.push('/dashboard');
         router.refresh();
       }
     } catch {
-      setError('Unable to connect to server. Please check your connection and try again.');
+      setError(tErrors('server.networkError'));
     } finally {
       setIsLoading(false);
     }
@@ -97,10 +102,10 @@ export default function LoginPage() {
         setError('');
         setResendCooldown(120); // 2 minute cooldown after successful send
       } else {
-        setError(data.error || 'Failed to resend verification email');
+        setError(data.error || tErrors('email.sendFailed'));
       }
     } catch {
-      setError('Unable to resend verification email. Please try again.');
+      setError(tErrors('email.sendFailed'));
     } finally {
       setResendLoading(false);
     }
@@ -121,10 +126,10 @@ export default function LoginPage() {
             priority
           />
           <h2 className="mt-6 text-center text-3xl font-bold text-foreground">
-            Welcome to Nametag
+            {t('welcomeTitle')}
           </h2>
           <p className="mt-2 text-center text-sm text-muted">
-            Sign in to manage your relationships
+            {t('welcomeSubtitle')}
           </p>
         </div>
 
@@ -137,7 +142,7 @@ export default function LoginPage() {
               </div>
               <div className="relative flex justify-center text-sm">
                 <span className="px-2 bg-background text-muted">
-                  Or continue with email
+                  {t('orContinueWith')}
                 </span>
               </div>
             </div>
@@ -148,7 +153,7 @@ export default function LoginPage() {
           <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none"></div>
           {resendSuccess && (
             <div className="bg-primary/20 border-2 border-primary text-primary px-4 py-3 rounded-lg shadow-lg shadow-primary/20 relative">
-              Verification email sent! Please check your inbox.
+              {t('emailSent')} {t('checkInbox')}
             </div>
           )}
           {error && (
@@ -158,7 +163,7 @@ export default function LoginPage() {
                 <div className="mt-2">
                   {resendCooldown > 0 ? (
                     <p className="text-sm">
-                      You can resend in {resendCooldown} seconds
+                      {t('resendCooldown', { seconds: resendCooldown })}
                     </p>
                   ) : (
                     <button
@@ -167,7 +172,7 @@ export default function LoginPage() {
                       disabled={resendLoading}
                       className="text-sm font-medium underline hover:no-underline disabled:opacity-50"
                     >
-                      {resendLoading ? 'Sending...' : 'Resend verification email'}
+                      {resendLoading ? tCommon('loading') : t('resendVerification')}
                     </button>
                   )}
                 </div>
@@ -177,7 +182,7 @@ export default function LoginPage() {
           <div className="rounded-md space-y-4 relative">
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-muted mb-2">
-                Email address
+                {t('emailAddress')}
               </label>
               <input
                 id="email"
@@ -193,7 +198,7 @@ export default function LoginPage() {
             </div>
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-muted mb-2">
-                Password
+                {t('password')}
               </label>
               <input
                 id="password"
@@ -215,7 +220,7 @@ export default function LoginPage() {
               disabled={isLoading}
               className="group relative w-full flex justify-center py-3 px-6 border-2 border-transparent text-base font-bold rounded-lg text-black bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-primary/50 hover:scale-105"
             >
-              {isLoading ? 'Signing in...' : 'Sign in'}
+              {isLoading ? t('signingIn') : t('login')}
             </button>
           </div>
 
@@ -225,16 +230,16 @@ export default function LoginPage() {
                 href="/forgot-password"
                 className="font-medium text-primary hover:text-primary-dark transition-colors"
               >
-                Forgot your password?
+                {t('forgotPassword')}
               </Link>
             </p>
             <p className="text-sm text-muted">
-              Don&apos;t have an account?{' '}
+              {t('dontHaveAccount')}{' '}
               <Link
                 href="/register"
                 className="font-medium text-primary hover:text-primary-dark transition-colors"
               >
-                Sign up
+                {t('register')}
               </Link>
             </p>
           </div>

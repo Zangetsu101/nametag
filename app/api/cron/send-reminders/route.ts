@@ -73,7 +73,7 @@ export async function GET(request: Request) {
           person.user.dateFormat
         );
 
-        const template = emailTemplates.importantDateReminder(
+        const template = await emailTemplates.importantDateReminder(
           personName,
           importantDate.title,
           formattedDate
@@ -134,7 +134,7 @@ export async function GET(request: Request) {
           person.contactReminderIntervalUnit || 'MONTHS'
         );
 
-        const template = emailTemplates.contactReminder(
+        const template = await emailTemplates.contactReminder(
           personName,
           lastContactFormatted,
           intervalText
