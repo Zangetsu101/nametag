@@ -437,6 +437,7 @@
       "cancel": "Cancel",
       "create": "Create",
       "save": "Save",
+      "saving": "Saving...",
       "createAndAddAnother": "Create and add another",
       "errorFutureDate": "Last contact date cannot be in the future",
       "errorSomethingWrong": "Something went wrong",
