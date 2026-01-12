@@ -6,18 +6,31 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
-## [0.10.4](https://github.com/mattogodoy/nametag/compare/v0.10.3...v0.10.4) (2026-01-09)
+## [0.11.0](https://github.com/mattogodoy/nametag/compare/v0.10.4...v0.11.0) (2026-01-12)
+
+### Features
+
+* Added middle name and second last name fields ([59ae3d0](https://github.com/mattogodoy/nametag/commit/59ae3d0aff3b2ce5ca06f133047bedbf0b6f4059))
 
 ### Bug Fixes
 
-* Roll back prisma installation removal ([6fdb2d5](https://github.com/mattogodoy/nametag/commit/6fdb2d59f1398122f35fa232d33ca0749a1ea9a8))
+* Disable 1passowrd for autocomplete fields ([dd0d473](https://github.com/mattogodoy/nametag/commit/dd0d473a6be567d088f14bf46a9cb946f61cb48b))
 
 ### Changelog
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.11.0](https://github.com/mattogodoy/nametag/compare/v0.10.4...v0.11.0)
+
+- ✨ Feature: Added middle name and second last name fields [`59ae3d0`](https://github.com/mattogodoy/nametag/commit/59ae3d0aff3b2ce5ca06f133047bedbf0b6f4059)
+- 🐛 Fix: Disable 1passowrd for autocomplete fields [`dd0d473`](https://github.com/mattogodoy/nametag/commit/dd0d473a6be567d088f14bf46a9cb946f61cb48b)
+- Added missing translation key [`656d8b0`](https://github.com/mattogodoy/nametag/commit/656d8b08c90b2cf7ccc90c3ce8899ce813f26c6b)
+
 #### [v0.10.4](https://github.com/mattogodoy/nametag/compare/v0.10.3...v0.10.4)
 
+> 9 January 2026
+
+- 🔧 Chore: release v0.10.4 [`1bbcc82`](https://github.com/mattogodoy/nametag/commit/1bbcc8288cfbfa5c05fab09ef23fce9d0678ec82)
 - 🐛 Fix: Roll back prisma installation removal [`6fdb2d5`](https://github.com/mattogodoy/nametag/commit/6fdb2d59f1398122f35fa232d33ca0749a1ea9a8)
 
 #### [v0.10.3](https://github.com/mattogodoy/nametag/compare/v0.10.2...v0.10.3)
