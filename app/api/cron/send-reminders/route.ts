@@ -6,6 +6,7 @@ import { env } from '@/lib/env';
 import { handleApiError } from '@/lib/api-utils';
 import { logger, securityLogger } from '@/lib/logger';
 import { getClientIp } from '@/lib/api-utils';
+import { createUnsubscribeToken } from '@/lib/unsubscribe-tokens';
 
 // This endpoint should be called by a cron job
 export async function GET(request: Request) {
@@ -50,6 +51,7 @@ export async function GET(request: Request) {
               select: {
                 email: true,
                 dateFormat: true,
+                language: true,
               },
             },
           },
@@ -67,16 +69,30 @@ export async function GET(request: Request) {
       if (shouldSend) {
         const { person } = importantDate;
         const userEmail = person.user.email;
+        const userLanguage = (person.user.language as 'en' | 'es-ES') || 'en';
         const personName = formatFullName(person);
         const formattedDate = formatDateForEmail(
           importantDate.date,
-          person.user.dateFormat
+          person.user.dateFormat,
+          userLanguage
         );
+
+        // Generate unsubscribe token
+        const unsubscribeToken = await createUnsubscribeToken({
+          userId: person.userId,
+          reminderType: 'IMPORTANT_DATE',
+          entityId: importantDate.id,
+        });
+
+        const baseUrl = env.NEXT_PUBLIC_APP_URL || 'https://nametag.one';
+        const unsubscribeUrl = `${baseUrl}/unsubscribe?token=${unsubscribeToken}`;
 
         const template = await emailTemplates.importantDateReminder(
           personName,
           importantDate.title,
-          formattedDate
+          formattedDate,
+          unsubscribeUrl,
+          userLanguage
         );
 
         const result = await sendEmail({
@@ -116,6 +132,7 @@ export async function GET(request: Request) {
           select: {
             email: true,
             dateFormat: true,
+            language: true,
           },
         },
       },
@@ -125,19 +142,32 @@ export async function GET(request: Request) {
       const shouldSend = shouldSendContactReminder(person, today);
 
       if (shouldSend) {
+        const userLanguage = (person.user.language as 'en' | 'es-ES') || 'en';
         const personName = formatFullName(person);
         const lastContactFormatted = person.lastContact
-          ? formatDateForEmail(person.lastContact, person.user.dateFormat)
+          ? formatDateForEmail(person.lastContact, person.user.dateFormat, userLanguage)
           : null;
         const intervalText = formatInterval(
           person.contactReminderInterval || 1,
           person.contactReminderIntervalUnit || 'MONTHS'
         );
 
+        // Generate unsubscribe token
+        const unsubscribeToken = await createUnsubscribeToken({
+          userId: person.userId,
+          reminderType: 'CONTACT',
+          entityId: person.id,
+        });
+
+        const baseUrl = env.NEXT_PUBLIC_APP_URL || 'https://nametag.one';
+        const unsubscribeUrl = `${baseUrl}/unsubscribe?token=${unsubscribeToken}`;
+
         const template = await emailTemplates.contactReminder(
           personName,
           lastContactFormatted,
-          intervalText
+          intervalText,
+          unsubscribeUrl,
+          userLanguage
         );
 
         const result = await sendEmail({
@@ -245,65 +275,80 @@ async function shouldSendImportantDateReminder(
   }
 
   if (importantDate.reminderType === 'RECURRING') {
-    // For recurring reminders, check if the anniversary falls on today
-    // and if enough time has passed since last reminder
+    // For recurring reminders, check based on the interval from the event date
+    const interval = importantDate.reminderInterval || 1;
+    const intervalUnit = importantDate.reminderIntervalUnit || 'YEARS';
 
-    // Get the next occurrence of this date
-    const nextOccurrence = getNextOccurrence(eventDate, today);
+    // Normalize the event date
+    const eventDateNormalized = new Date(eventDate);
+    eventDateNormalized.setHours(0, 0, 0, 0);
 
-    // Check if today matches the next occurrence
-    const nextOccurrenceDay = new Date(nextOccurrence);
-    nextOccurrenceDay.setHours(0, 0, 0, 0);
-
-    if (nextOccurrenceDay.getTime() !== today.getTime()) {
+    // Don't send reminders before the event date
+    if (today.getTime() < eventDateNormalized.getTime()) {
       return false;
     }
 
-    // Check if we've already sent a reminder for this occurrence
-    if (importantDate.lastReminderSent) {
-      const lastSent = new Date(importantDate.lastReminderSent);
-      const intervalMs = getIntervalMs(
-        importantDate.reminderInterval || 1,
-        importantDate.reminderIntervalUnit || 'YEARS'
-      );
+    // Special handling for YEARS to avoid leap year drift
+    if (intervalUnit === 'YEARS') {
+      const eventDay = eventDateNormalized.getDate();
+      const eventMonth = eventDateNormalized.getMonth();
+      const todayDay = today.getDate();
+      const todayMonth = today.getMonth();
 
-      // Don't send if we sent a reminder within the interval period
-      const timeSinceLastSent = today.getTime() - lastSent.getTime();
-      if (timeSinceLastSent < intervalMs * 0.9) {
-        // 0.9 to account for slight timing variations
+      // Check if today is the anniversary (same month and day)
+      if (todayDay !== eventDay || todayMonth !== eventMonth) {
         return false;
       }
+
+      // If we've sent before, check if enough years have passed
+      if (importantDate.lastReminderSent) {
+        const lastSent = new Date(importantDate.lastReminderSent);
+        const lastSentYear = lastSent.getFullYear();
+        const todayYear = today.getFullYear();
+        const yearsSinceLastSent = todayYear - lastSentYear;
+
+        return yearsSinceLastSent >= interval;
+      }
+
+      // Never sent before - it's the anniversary, so send
+      return true;
     }
 
-    return true;
+    // For other intervals (DAYS, WEEKS, MONTHS), use millisecond calculations
+    const intervalMs = getIntervalMs(interval, intervalUnit);
+
+    // If we've sent before, check if enough time has passed
+    if (importantDate.lastReminderSent) {
+      const lastSent = new Date(importantDate.lastReminderSent);
+      lastSent.setHours(0, 0, 0, 0);
+
+      const timeSinceLastSent = today.getTime() - lastSent.getTime();
+
+      // Not enough time has passed since last reminder
+      if (timeSinceLastSent < intervalMs) {
+        return false;
+      }
+
+      // Calculate the next scheduled reminder date from last sent
+      const intervalsPassed = Math.floor(timeSinceLastSent / intervalMs);
+      const nextReminderDate = new Date(lastSent.getTime() + (intervalsPassed * intervalMs));
+      nextReminderDate.setHours(0, 0, 0, 0);
+
+      return nextReminderDate.getTime() === today.getTime();
+    }
+
+    // Never sent before - check if we should send based on event date
+    const timeSinceEvent = today.getTime() - eventDateNormalized.getTime();
+
+    // Calculate which occurrence this is
+    const intervalsPassed = Math.floor(timeSinceEvent / intervalMs);
+    const nextReminderDate = new Date(eventDateNormalized.getTime() + (intervalsPassed * intervalMs));
+    nextReminderDate.setHours(0, 0, 0, 0);
+
+    return nextReminderDate.getTime() === today.getTime();
   }
 
   return false;
-}
-
-function getNextOccurrence(eventDate: Date, today: Date): Date {
-  // Get this year's occurrence
-  const thisYearOccurrence = new Date(
-    today.getFullYear(),
-    eventDate.getMonth(),
-    eventDate.getDate()
-  );
-  thisYearOccurrence.setHours(0, 0, 0, 0);
-
-  const todayNormalized = new Date(today);
-  todayNormalized.setHours(0, 0, 0, 0);
-
-  // If this year's occurrence hasn't passed, return it
-  if (thisYearOccurrence.getTime() >= todayNormalized.getTime()) {
-    return thisYearOccurrence;
-  }
-
-  // Otherwise, return next year's occurrence
-  return new Date(
-    today.getFullYear() + 1,
-    eventDate.getMonth(),
-    eventDate.getDate()
-  );
 }
 
 function getIntervalMs(interval: number, unit: string): number {
@@ -377,10 +422,12 @@ function formatInterval(interval: number, unit: string): string {
 
 function formatDateForEmail(
   date: Date,
-  dateFormat: string | null
+  dateFormat: string | null,
+  locale: 'en' | 'es-ES' = 'en'
 ): string {
   const d = new Date(date);
-  const month = d.toLocaleDateString('en-US', { month: 'long' });
+  const localeCode = locale === 'es-ES' ? 'es-ES' : 'en-US';
+  const month = d.toLocaleDateString(localeCode, { month: 'long' });
   const day = d.getDate();
   const year = d.getFullYear();
 

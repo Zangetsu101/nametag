@@ -206,6 +206,23 @@ function emailNote(text: string): string {
   return `<p style="margin: 16px 0 0; color: ${COLORS.textLight}; font-size: 14px; line-height: 1.5;">${text}</p>`;
 }
 
+/**
+ * Create unsubscribe footer for reminder emails
+ */
+async function emailUnsubscribeFooter(unsubscribeUrl: string, locale: SupportedLocale = 'en'): Promise<string> {
+  const t = await getTranslationsForLocale(locale, 'emails.common');
+  return `
+<table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="margin-top: 24px; padding-top: 16px; border-top: 1px solid ${COLORS.border};">
+  <tr>
+    <td align="center">
+      <p style="margin: 0; color: ${COLORS.textLight}; font-size: 12px; line-height: 1.5;">
+        <a href="${escapeHtml(unsubscribeUrl)}" style="color: ${COLORS.textLight}; text-decoration: underline;">${t('unsubscribe')}</a>
+      </p>
+    </td>
+  </tr>
+</table>`;
+}
+
 // Email template helpers for common use cases
 export const emailTemplates = {
   accountVerification: async (verificationUrl: string, locale: SupportedLocale = 'en') => {
@@ -222,7 +239,7 @@ export const emailTemplates = {
     };
   },
 
-  importantDateReminder: async (personName: string, eventType: string, date: string, locale: SupportedLocale = 'en') => {
+  importantDateReminder: async (personName: string, eventType: string, date: string, unsubscribeUrl: string, locale: SupportedLocale = 'en') => {
     const t = await getTranslationsForLocale(locale, 'emails.importantDateReminder');
     return {
       subject: t('subject', { personName, eventType }),
@@ -231,12 +248,13 @@ export const emailTemplates = {
         ${emailInfoBox(t('infoBox', { personName: `<strong>${escapeHtml(personName)}</strong>`, eventType: escapeHtml(eventType), date: `<strong>${escapeHtml(date)}</strong>` }), 'info')}
         ${emailParagraph(t('body'))}
         ${emailButton(`${APP_URL}/dashboard`, t('button'))}
+        ${await emailUnsubscribeFooter(unsubscribeUrl, locale)}
       `, locale),
-      text: `${t('subject', { personName, eventType })} ${t('infoBox', { personName, eventType, date })} ${t('body')}`,
+      text: `${t('subject', { personName, eventType })} ${t('infoBox', { personName, eventType, date })} ${t('body')}\n\n${t('unsubscribe')}: ${unsubscribeUrl}`,
     };
   },
 
-  contactReminder: async (personName: string, lastContactDate: string | null, interval: string, locale: SupportedLocale = 'en') => {
+  contactReminder: async (personName: string, lastContactDate: string | null, interval: string, unsubscribeUrl: string, locale: SupportedLocale = 'en') => {
     const t = await getTranslationsForLocale(locale, 'emails.contactReminder');
     const lastContactText = lastContactDate ? ` (${t('lastContact', { date: escapeHtml(lastContactDate) })})` : '';
     return {
@@ -247,8 +265,9 @@ export const emailTemplates = {
         ${emailInfoBox(t('infoBox', { interval: escapeHtml(interval) }), 'info')}
         ${emailParagraph(t('suggestion'))}
         ${emailButton(`${APP_URL}/dashboard`, t('button'))}
+        ${await emailUnsubscribeFooter(unsubscribeUrl, locale)}
       `, locale),
-      text: `${t('subject', { personName })} ${t('body', { personName })}${lastContactDate ? ` ${t('lastContact', { date: lastContactDate })}` : ''}. ${t('infoBox', { interval })} ${t('suggestion')}`,
+      text: `${t('subject', { personName })} ${t('body', { personName })}${lastContactDate ? ` ${t('lastContact', { date: lastContactDate })}` : ''}. ${t('infoBox', { interval })} ${t('suggestion')}\n\n${t('unsubscribe')}: ${unsubscribeUrl}`,
     };
   },
 

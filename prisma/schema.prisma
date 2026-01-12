@@ -41,6 +41,7 @@ model User {
   groups            Group[]
   relationshipTypes RelationshipType[]
   subscription      Subscription?
+  unsubscribeTokens UnsubscribeToken[]
 
   @@unique([provider, providerAccountId])
   @@map("users")
@@ -181,6 +182,11 @@ enum ReminderIntervalUnit {
   WEEKS
   MONTHS
   YEARS
+}
+
+enum ReminderEntityType {
+  IMPORTANT_DATE
+  CONTACT
 }
 
 // RelationshipType Model - User-defined relationship types
@@ -405,4 +411,26 @@ model AdminAuditLog {
   @@index([action, createdAt])
   @@index([targetType, targetId])
   @@map("admin_audit_logs")
+}
+
+// UnsubscribeToken Model - Secure tokens for one-click reminder unsubscribe
+model UnsubscribeToken {
+  id           String              @id @default(cuid())
+  token        String              @unique
+  userId       String
+  reminderType ReminderEntityType
+  entityId     String              // Either ImportantDate.id or Person.id
+  used         Boolean             @default(false)
+  usedAt       DateTime?
+  expiresAt    DateTime
+  createdAt    DateTime            @default(now())
+
+  // Relations
+  user         User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([token])
+  @@index([userId])
+  @@index([entityId, reminderType])
+  @@index([expiresAt])
+  @@map("unsubscribe_tokens")
 }

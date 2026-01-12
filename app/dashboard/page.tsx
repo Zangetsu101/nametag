@@ -18,31 +18,67 @@ interface UpcomingEvent {
   daysUntil: number;
 }
 
-function getNextOccurrence(eventDate: Date, today: Date): Date {
-  const thisYearOccurrence = new Date(
-    today.getFullYear(),
-    eventDate.getMonth(),
-    eventDate.getDate()
-  );
-  thisYearOccurrence.setHours(0, 0, 0, 0);
+function getNextOccurrence(
+  eventDate: Date,
+  today: Date,
+  interval: number,
+  intervalUnit: string,
+  lastReminderSent: Date | null
+): Date {
+  const eventDateNormalized = new Date(eventDate);
+  eventDateNormalized.setHours(0, 0, 0, 0);
 
   const todayNormalized = new Date(today);
   todayNormalized.setHours(0, 0, 0, 0);
 
-  if (thisYearOccurrence.getTime() >= todayNormalized.getTime()) {
-    return thisYearOccurrence;
+  // Special handling for YEARS to get the next anniversary
+  if (intervalUnit === 'YEARS') {
+    const thisYearOccurrence = new Date(
+      today.getFullYear(),
+      eventDate.getMonth(),
+      eventDate.getDate()
+    );
+    thisYearOccurrence.setHours(0, 0, 0, 0);
+
+    if (thisYearOccurrence.getTime() >= todayNormalized.getTime()) {
+      return thisYearOccurrence;
+    }
+
+    return new Date(
+      today.getFullYear() + 1,
+      eventDate.getMonth(),
+      eventDate.getDate()
+    );
   }
 
-  return new Date(
-    today.getFullYear() + 1,
-    eventDate.getMonth(),
-    eventDate.getDate()
-  );
+  // For other intervals (DAYS, WEEKS, MONTHS), calculate from event date or last sent
+  const intervalMs = getIntervalMs(interval, intervalUnit);
+  const referenceDate = lastReminderSent
+    ? new Date(lastReminderSent)
+    : eventDateNormalized;
+  referenceDate.setHours(0, 0, 0, 0);
+
+  // If reference date is in the future, return it
+  if (referenceDate.getTime() > todayNormalized.getTime()) {
+    return referenceDate;
+  }
+
+  // Calculate how many intervals have passed since reference date
+  const timeSinceReference = todayNormalized.getTime() - referenceDate.getTime();
+  const intervalsPassed = Math.floor(timeSinceReference / intervalMs);
+
+  // Calculate next occurrence (add one more interval to get the next one)
+  const nextOccurrence = new Date(referenceDate.getTime() + ((intervalsPassed + 1) * intervalMs));
+  nextOccurrence.setHours(0, 0, 0, 0);
+
+  return nextOccurrence;
 }
 
 function getIntervalMs(interval: number, unit: string): number {
   const msPerDay = 24 * 60 * 60 * 1000;
   switch (unit) {
+    case 'DAYS':
+      return interval * msPerDay;
     case 'WEEKS':
       return interval * 7 * msPerDay;
     case 'MONTHS':
@@ -134,8 +170,16 @@ export default async function DashboardPage() {
     if (importantDate.reminderType === 'ONCE') {
       eventDate = new Date(importantDate.date);
     } else {
-      // Recurring - get next occurrence
-      eventDate = getNextOccurrence(new Date(importantDate.date), today);
+      // Recurring - get next occurrence based on interval
+      const interval = importantDate.reminderInterval || 1;
+      const intervalUnit = importantDate.reminderIntervalUnit || 'YEARS';
+      eventDate = getNextOccurrence(
+        new Date(importantDate.date),
+        today,
+        interval,
+        intervalUnit,
+        importantDate.lastReminderSent
+      );
     }
 
     const daysUntil = getDaysUntil(eventDate, today);

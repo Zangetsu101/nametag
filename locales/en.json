@@ -377,10 +377,14 @@
     "monthsAgo": "{months} months ago",
     "oneYearAgo": "1 year ago",
     "yearsAgo": "{years} years ago",
+    "day": "day",
     "week": "week",
-    "weeks": "weeks",
     "month": "month",
+    "year": "year",
+    "days": "days",
+    "weeks": "weeks",
     "months": "months",
+    "years": "years",
     "addNewPerson": "Add New Person",
     "backToPerson": "← Back to {name}",
     "editPerson": "Edit {name}",
@@ -449,6 +453,10 @@
       "weeks": "weeks",
       "months": "months",
       "years": "years",
+      "day": "day",
+      "week": "week",
+      "month": "month",
+      "year": "year",
       "you": "You",
       "relationshipToYouDirect": "Relationship to You",
       "markdown": {
@@ -881,7 +889,8 @@
       "visitNametag": "Visit Nametag",
       "footer": "You're receiving this email because you have an account at Nametag.",
       "copyright": "© {year} Nametag. All rights reserved.",
-      "logoAlt": "Nametag"
+      "logoAlt": "Nametag",
+      "unsubscribe": "Disable this reminder"
     },
     "verification": {
       "subject": "Verify your Nametag account",
@@ -895,7 +904,8 @@
       "heading": "Upcoming Event Reminder",
       "infoBox": "{personName}'s {eventType} is on {date}.",
       "body": "Don't forget to reach out and make their day special!",
-      "button": "Open Nametag"
+      "button": "Open Nametag",
+      "unsubscribe": "Disable this reminder"
     },
     "contactReminder": {
       "subject": "Time to catch up with {personName}",
@@ -904,7 +914,8 @@
       "lastContact": "last contact: {date}",
       "infoBox": "You asked to be reminded to catch up after {interval} of your last contact.",
       "suggestion": "Why not reach out today? A simple message can brighten someone's day.",
-      "button": "Open Nametag"
+      "button": "Open Nametag",
+      "unsubscribe": "Disable this reminder"
     },
     "passwordReset": {
       "subject": "Reset your Nametag password",
@@ -951,6 +962,27 @@
       "bodyScheduledDetail": "After this date, your account will be downgraded to the Free plan. You can resubscribe at any time from your billing settings.",
       "button": "View Billing Settings",
       "note": "We're sorry to see you go. If you have any feedback about your experience, we'd love to hear from you."
+    }
+  },
+  "unsubscribe": {
+    "processing": "Processing...",
+    "pleaseWait": "Please wait while we process your request.",
+    "success": {
+      "title": "Disabled Successfully",
+      "importantDate": "You will no longer receive reminders for this event. You can re-enable this reminder anytime from your settings.",
+      "contact": "You will no longer receive reminders to contact this person. You can re-enable this reminder anytime from your settings.",
+      "reEnableInSettings": "Manage Reminder Settings",
+      "goToDashboard": "Go to Dashboard"
+    },
+    "error": {
+      "title": "Unable to disable",
+      "invalid": "This link is invalid. It may have been already used or doesn't exist.",
+      "alreadyUsed": "This reminder has already been disabled.",
+      "expired": "This link has expired. Please manage your reminder settings from your account.",
+      "missing": "No token was provided.",
+      "network": "A network error occurred. Please try again later.",
+      "generic": "Something went wrong. Please try again or manage your settings from your account.",
+      "goToDashboard": "Go to Dashboard"
     }
   }
 }

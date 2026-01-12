@@ -377,10 +377,14 @@
     "monthsAgo": "hace {months} meses",
     "oneYearAgo": "hace 1 año",
     "yearsAgo": "hace {years} años",
+    "day": "día",
     "week": "semana",
-    "weeks": "semanas",
     "month": "mes",
+    "year": "año",
+    "days": "días",
+    "weeks": "semanas",
     "months": "meses",
+    "years": "años",
     "addNewPerson": "Añadir Nueva Persona",
     "backToPerson": "← Volver a {name}",
     "editPerson": "Editar {name}",
@@ -449,6 +453,10 @@
       "weeks": "semanas",
       "months": "meses",
       "years": "años",
+      "day": "día",
+      "week": "semana",
+      "month": "mes",
+      "year": "año",
       "you": "Tú",
       "relationshipToYouDirect": "Relación contigo",
       "markdown": {
@@ -881,7 +889,8 @@
       "visitNametag": "Visitar Nametag",
       "footer": "Recibes este correo porque tienes una cuenta en Nametag.",
       "copyright": "© {year} Nametag. Todos los derechos reservados.",
-      "logoAlt": "Nametag"
+      "logoAlt": "Nametag",
+      "unsubscribe": "Desactivar este recordatorio"
     },
     "verification": {
       "subject": "Verifica tu cuenta de Nametag",
@@ -895,7 +904,8 @@
       "heading": "Recordatorio de Evento Próximo",
       "infoBox": "El {eventType} de {personName} es el {date}.",
       "body": "¡No olvides comunicarte y hacer que su día sea especial!",
-      "button": "Abrir Nametag"
+      "button": "Abrir Nametag",
+      "unsubscribe": "Desactivar este recordatorio"
     },
     "contactReminder": {
       "subject": "Es hora de ponerse al día con {personName}",
@@ -904,7 +914,8 @@
       "lastContact": "último contacto: {date}",
       "infoBox": "Solicitaste que te recordáramos ponerte al día después de {interval} de tu último contacto.",
       "suggestion": "¿Por qué no te pones en contacto hoy? Un simple mensaje puede alegrar el día de alguien.",
-      "button": "Abrir Nametag"
+      "button": "Abrir Nametag",
+      "unsubscribe": "Desactivar este recordatorio"
     },
     "passwordReset": {
       "subject": "Restablece tu contraseña de Nametag",
@@ -951,6 +962,27 @@
       "bodyScheduledDetail": "Después de esta fecha, tu cuenta será degradada al plan Gratuito. Puedes volver a suscribirte en cualquier momento desde tu configuración de facturación.",
       "button": "Ver Configuración de Facturación",
       "note": "Lamentamos verte partir. Si tienes algún comentario sobre tu experiencia, nos encantaría escucharlo."
+    }
+  },
+  "unsubscribe": {
+    "processing": "Procesando...",
+    "pleaseWait": "Por favor espera mientras procesamos tu solicitud.",
+    "success": {
+      "title": "Suscripción cancelada exitosamente",
+      "importantDate": "Ya no recibirás recordatorios para esta fecha importante. Puedes reactivar este recordatorio en cualquier momento desde tu configuración.",
+      "contact": "Ya no recibirás recordatorios para contactar a esta persona. Puedes reactivar este recordatorio en cualquier momento desde tu configuración.",
+      "reEnableInSettings": "Administrar configuración de recordatorios",
+      "goToDashboard": "Ir al panel"
+    },
+    "error": {
+      "title": "No se pudo cancelar la suscripción",
+      "invalid": "Este enlace de cancelación no es válido. Es posible que ya se haya usado o no exista.",
+      "alreadyUsed": "Este recordatorio ya ha sido cancelado.",
+      "expired": "Este enlace de cancelación ha expirado. Por favor administra tu configuración de recordatorios desde tu cuenta.",
+      "missing": "No se proporcionó ningún token de cancelación.",
+      "network": "Ocurrió un error de red. Por favor intenta de nuevo más tarde.",
+      "generic": "Algo salió mal. Por favor intenta de nuevo o administra tu configuración desde tu cuenta.",
+      "goToDashboard": "Ir al panel"
     }
   }
 }

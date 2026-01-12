@@ -62,6 +62,7 @@ describe('Email Localization', () => {
         'John Doe',
         'Birthday',
         'January 15, 2024',
+        'https://nametag.one/unsubscribe?token=test',
         'en'
       );
 
@@ -78,6 +79,7 @@ describe('Email Localization', () => {
         'John Doe',
         'Cumpleaños',
         '15 de enero de 2024',
+        'https://nametag.one/unsubscribe?token=test',
         'es-ES'
       );
 
@@ -96,6 +98,7 @@ describe('Email Localization', () => {
         'Jane Smith',
         'December 1, 2023',
         '2 months',
+        'https://nametag.one/unsubscribe?token=test',
         'en'
       );
 
@@ -112,6 +115,7 @@ describe('Email Localization', () => {
         'Jane Smith',
         '1 de diciembre de 2023',
         '2 meses',
+        'https://nametag.one/unsubscribe?token=test',
         'es-ES'
       );
 
