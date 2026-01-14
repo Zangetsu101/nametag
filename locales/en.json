@@ -720,6 +720,8 @@
     "invalidResetLink": "Invalid Reset Link",
     "resetLinkInvalidOrExpired": "This password reset link is invalid or has expired.",
     "requestNewResetLink": "Request a new reset link",
+    "registrationDisabled": "Registration Disabled",
+    "registrationDisabledMessage": "Registration is currently disabled by the administrator. Please contact the site owner for access.",
     "passwordResetSuccessful": "Password Reset Successful",
     "passwordResetSuccessMessage": "Your password has been updated. You can now log in with your new password.",
     "goToLoginButton": "Go to login",

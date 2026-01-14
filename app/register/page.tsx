@@ -24,6 +24,25 @@ export default function RegisterPage() {
   const [success, setSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showGoogleAuth, setShowGoogleAuth] = useState(false);
+  const [registrationEnabled, setRegistrationEnabled] = useState(true);
+  const [checkingStatus, setCheckingStatus] = useState(true);
+
+  // Check if registration is enabled
+  useEffect(() => {
+    async function checkRegistrationStatus() {
+      try {
+        const response = await fetch('/api/auth/registration-status');
+        const data = await response.json();
+        setRegistrationEnabled(data.enabled);
+      } catch {
+        // If check fails, default to enabled to avoid blocking legitimate users
+        setRegistrationEnabled(true);
+      } finally {
+        setCheckingStatus(false);
+      }
+    }
+    checkRegistrationStatus();
+  }, []);
 
   // Fetch available providers
   useEffect(() => {
@@ -95,6 +114,48 @@ export default function RegisterPage() {
     } finally {
       setIsLoading(false);
     }
+  }
+
+  // Show loading state while checking registration status
+  if (checkingStatus) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background px-4">
+        <div className="max-w-md w-full space-y-8 text-center">
+          <p className="text-muted">{tCommon('loading')}</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show disabled message if registration is not enabled
+  if (!registrationEnabled) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background px-4">
+        <div className="max-w-md w-full space-y-8 text-center">
+          <div className="flex flex-col items-center">
+            <Image
+              src="/logo.svg"
+              alt="Nametag Logo"
+              width={96}
+              height={96}
+              priority
+            />
+            <h2 className="mt-6 text-center text-3xl font-bold text-foreground">
+              {t('registrationDisabled')}
+            </h2>
+          </div>
+          <div className="bg-warning/10 border-2 border-warning text-warning px-6 py-4 rounded-lg">
+            <p className="text-sm">{t('registrationDisabledMessage')}</p>
+          </div>
+          <Link
+            href="/login"
+            className="inline-block text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
+          >
+            {t('backToLogin')}
+          </Link>
+        </div>
+      </div>
+    );
   }
 
   if (success) {

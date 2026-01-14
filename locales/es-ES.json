@@ -720,6 +720,8 @@
     "invalidResetLink": "Enlace de Restablecimiento Inválido",
     "resetLinkInvalidOrExpired": "Este enlace de restablecimiento de contraseña es inválido o ha expirado.",
     "requestNewResetLink": "Solicitar un nuevo enlace de restablecimiento",
+    "registrationDisabled": "Registro Deshabilitado",
+    "registrationDisabledMessage": "El registro está actualmente deshabilitado por el administrador. Por favor, contacte al propietario del sitio para obtener acceso.",
     "passwordResetSuccessful": "Contraseña Restablecida con Éxito",
     "passwordResetSuccessMessage": "Tu contraseña ha sido actualizada. Ahora puedes iniciar sesión con tu nueva contraseña.",
     "goToLoginButton": "Ir a iniciar sesión",

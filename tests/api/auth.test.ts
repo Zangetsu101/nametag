@@ -5,6 +5,7 @@ const mocks = vi.hoisted(() => ({
   userFindUnique: vi.fn(),
   userCreate: vi.fn(),
   userUpdate: vi.fn(),
+  userCount: vi.fn(),
   sendEmail: vi.fn(),
   checkRateLimitAsync: vi.fn(), // For rate-limit-redis (async)
   checkRateLimitSync: vi.fn(),  // For rate-limit (sync)
@@ -20,6 +21,7 @@ vi.mock('../../lib/prisma', () => ({
       findUnique: mocks.userFindUnique,
       create: mocks.userCreate,
       update: mocks.userUpdate,
+      count: mocks.userCount,
     },
   },
 }));
@@ -111,6 +113,8 @@ describe('Auth API', () => {
     mocks.bcryptHash.mockResolvedValue('hashed-password');
     // Default to SaaS mode (email verification enabled) for backwards compatibility
     mocks.isFeatureEnabled.mockReturnValue(true);
+    // Reset environment variable
+    delete process.env.DISABLE_REGISTRATION;
   });
 
   describe('POST /api/auth/register', () => {
@@ -463,6 +467,151 @@ describe('Auth API', () => {
             }),
           })
         );
+      });
+    });
+
+    describe('DISABLE_REGISTRATION Feature', () => {
+      it('should allow registration when DISABLE_REGISTRATION is not set', async () => {
+        mocks.userFindUnique.mockResolvedValue(null);
+        mocks.userCreate.mockResolvedValue({
+          id: 'user-123',
+          email: 'test@example.com',
+          name: 'Test User',
+        });
+
+        const request = new Request('http://localhost/api/auth/register', {
+          method: 'POST',
+          body: JSON.stringify({
+            email: 'test@example.com',
+            password: 'ValidPassword123!',
+            name: 'Test User',
+          }),
+          headers: { 'content-type': 'application/json' },
+        });
+
+        const response = await register(request);
+
+        expect(response.status).toBe(201);
+        expect(mocks.userCount).not.toHaveBeenCalled();
+      });
+
+      it('should allow registration when DISABLE_REGISTRATION is false', async () => {
+        process.env.DISABLE_REGISTRATION = 'false';
+        mocks.userFindUnique.mockResolvedValue(null);
+        mocks.userCreate.mockResolvedValue({
+          id: 'user-123',
+          email: 'test@example.com',
+          name: 'Test User',
+        });
+
+        const request = new Request('http://localhost/api/auth/register', {
+          method: 'POST',
+          body: JSON.stringify({
+            email: 'test@example.com',
+            password: 'ValidPassword123!',
+            name: 'Test User',
+          }),
+          headers: { 'content-type': 'application/json' },
+        });
+
+        const response = await register(request);
+
+        expect(response.status).toBe(201);
+        expect(mocks.userCount).not.toHaveBeenCalled();
+      });
+
+      it('should allow first user when DISABLE_REGISTRATION is true and no users exist', async () => {
+        process.env.DISABLE_REGISTRATION = 'true';
+        mocks.userCount.mockResolvedValue(0);
+        mocks.userFindUnique.mockResolvedValue(null);
+        mocks.userCreate.mockResolvedValue({
+          id: 'user-123',
+          email: 'test@example.com',
+          name: 'Test User',
+        });
+
+        const request = new Request('http://localhost/api/auth/register', {
+          method: 'POST',
+          body: JSON.stringify({
+            email: 'test@example.com',
+            password: 'ValidPassword123!',
+            name: 'Test User',
+          }),
+          headers: { 'content-type': 'application/json' },
+        });
+
+        const response = await register(request);
+        const body = await response.json();
+
+        expect(response.status).toBe(201);
+        expect(mocks.userCount).toHaveBeenCalled();
+        expect(body.user.email).toBe('test@example.com');
+      });
+
+      it('should block registration when DISABLE_REGISTRATION is true and users exist', async () => {
+        process.env.DISABLE_REGISTRATION = 'true';
+        mocks.userCount.mockResolvedValue(1);
+
+        const request = new Request('http://localhost/api/auth/register', {
+          method: 'POST',
+          body: JSON.stringify({
+            email: 'test@example.com',
+            password: 'ValidPassword123!',
+            name: 'Test User',
+          }),
+          headers: { 'content-type': 'application/json' },
+        });
+
+        const response = await register(request);
+        const body = await response.json();
+
+        expect(response.status).toBe(403);
+        expect(body.error).toBe('Registration is currently disabled');
+        expect(mocks.userCreate).not.toHaveBeenCalled();
+        expect(mocks.userFindUnique).not.toHaveBeenCalled();
+      });
+
+      it('should block registration when DISABLE_REGISTRATION is true and multiple users exist', async () => {
+        process.env.DISABLE_REGISTRATION = 'true';
+        mocks.userCount.mockResolvedValue(5);
+
+        const request = new Request('http://localhost/api/auth/register', {
+          method: 'POST',
+          body: JSON.stringify({
+            email: 'second.user@example.com',
+            password: 'ValidPassword123!',
+            name: 'Second User',
+          }),
+          headers: { 'content-type': 'application/json' },
+        });
+
+        const response = await register(request);
+        const body = await response.json();
+
+        expect(response.status).toBe(403);
+        expect(body.error).toBe('Registration is currently disabled');
+        expect(mocks.userCreate).not.toHaveBeenCalled();
+      });
+
+      it('should check user count before rate limiting when DISABLE_REGISTRATION is true', async () => {
+        process.env.DISABLE_REGISTRATION = 'true';
+        mocks.userCount.mockResolvedValue(1);
+
+        const request = new Request('http://localhost/api/auth/register', {
+          method: 'POST',
+          body: JSON.stringify({
+            email: 'test@example.com',
+            password: 'ValidPassword123!',
+            name: 'Test User',
+          }),
+          headers: { 'content-type': 'application/json' },
+        });
+
+        const response = await register(request);
+
+        expect(response.status).toBe(403);
+        // Should block before validation, so rate limit should still be called
+        expect(mocks.checkRateLimitAsync).toHaveBeenCalled();
       });
     });
   });

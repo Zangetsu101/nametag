@@ -191,6 +191,7 @@ The database will be automatically set up on first run.
 |----------|-------------|---------|
 | `RESEND_API_KEY` | API key from [Resend](https://resend.com) for email functionality | Not required for self-hosted |
 | `EMAIL_DOMAIN` | Verified domain for sending emails | Not required for self-hosted |
+| `DISABLE_REGISTRATION` | Disable user registration after first user | `false` |
 | `NODE_ENV` | Environment mode | `production` |
 | `LOG_LEVEL` | Logging verbosity | `info` |
 
@@ -209,6 +210,18 @@ If you want email functionality:
 4. Add `RESEND_API_KEY` and `EMAIL_DOMAIN` to your `.env` file
 
 **Note**: The hosted service at [nametag.one](https://nametag.one) requires email verification for security, but self-hosted instances are designed for personal use and auto-verify all accounts.
+
+### Restricting Registration (Optional)
+
+For public-facing instances, you may want to prevent strangers from creating accounts.
+
+Set `DISABLE_REGISTRATION=true` in your `.env` file. This allows:
+- The first user to register normally (when no users exist)
+- All subsequent registration attempts are blocked
+
+This is ideal for personal instances where only you (and potentially family members you manually add) should have access. The instance owner can register first, then registration automatically closes.
+
+To allow additional users later, set `DISABLE_REGISTRATION=false` and restart the service.
 
 ### Reverse Proxy (Production)
 

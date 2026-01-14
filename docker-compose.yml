@@ -57,6 +57,7 @@ services:
       - REDIS_URL=redis://:${REDIS_PASSWORD}@redis:6379
       - REDIS_PASSWORD=${REDIS_PASSWORD:?Redis password required}
       - SAAS_MODE=${SAAS_MODE:-false}
+      - DISABLE_REGISTRATION=${DISABLE_REGISTRATION:-false}
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
     volumes:
