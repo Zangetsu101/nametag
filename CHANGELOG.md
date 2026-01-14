@@ -6,20 +6,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
-## [0.12.2](https://github.com/mattogodoy/nametag/compare/v0.12.1...v0.12.2) (2026-01-14)
+## [0.12.3](https://github.com/mattogodoy/nametag/compare/v0.12.2...v0.12.3) (2026-01-14)
 
 ### Bug Fixes
 
-* Fixed incorrect relationship side showing on the user details page ([11d72c3](https://github.com/mattogodoy/nametag/commit/11d72c33bbe06f3d601f4cc8b9087dcb093c4bbc))
+* Some buttons were getting stuck in a disabled state ([6369811](https://github.com/mattogodoy/nametag/commit/6369811f3d61a6402b45b416630224be709353ac))
 
 ### Changelog
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.12.3](https://github.com/mattogodoy/nametag/compare/v0.12.2...v0.12.3)
+
+- Fix typo [`#5`](https://github.com/mattogodoy/nametag/pull/5)
+- 🐛 Fix: Some buttons were getting stuck in a disabled state [`6369811`](https://github.com/mattogodoy/nametag/commit/6369811f3d61a6402b45b416630224be709353ac)
+
 #### [v0.12.2](https://github.com/mattogodoy/nametag/compare/v0.12.1...v0.12.2)
+
+> 14 January 2026
 
 - Fix incorrect relationship side showing on the user details page [`#11`](https://github.com/mattogodoy/nametag/pull/11)
 - 🐛 Fix: Fixed incorrect relationship side showing on the user details page [`11d72c3`](https://github.com/mattogodoy/nametag/commit/11d72c33bbe06f3d601f4cc8b9087dcb093c4bbc)
+- 🔧 Chore: release v0.12.2 [`e8ec37c`](https://github.com/mattogodoy/nametag/commit/e8ec37c00452469b945c8b0db8872e34dd8ecb66)
 
 #### [v0.12.1](https://github.com/mattogodoy/nametag/compare/v0.12.0...v0.12.1)
 
