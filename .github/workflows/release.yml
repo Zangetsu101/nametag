@@ -47,7 +47,7 @@ jobs:
             echo "should_release=false" >> $GITHUB_OUTPUT
           fi
 
-  release:
+  prepare-release:
     needs: check-commits
     if: needs.check-commits.outputs.should_release == 'true'
     runs-on: ubuntu-latest
@@ -55,6 +55,7 @@ jobs:
       version: ${{ steps.version.outputs.version }}
       sha_short: ${{ steps.version.outputs.sha_short }}
       timestamp: ${{ steps.version.outputs.timestamp }}
+      tag_name: ${{ steps.version.outputs.tag_name }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -99,28 +100,31 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Create Release
+      - name: Bump version and create tag (but don't publish release yet)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          npm run release -- --ci
+          npm run release -- --ci --no-github.release
 
       - name: Get new version
         id: version
         run: |
           VERSION=$(node -p "require('./package.json').version")
           echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "tag_name=v${VERSION}" >> $GITHUB_OUTPUT
           echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
           echo "timestamp=$(date -u +'%Y%m%d-%H%M%S')" >> $GITHUB_OUTPUT
 
   build-images:
-    needs: release
+    needs: prepare-release
     runs-on: ubuntu-latest
     strategy:
       matrix:
         arch: [amd64, arm64]
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.prepare-release.outputs.tag_name }}
 
       - name: Set up QEMU
         if: matrix.arch == 'arm64'
@@ -143,7 +147,7 @@ jobs:
           file: ./Dockerfile.prod
           platforms: linux/${{ matrix.arch }}
           push: true
-          tags: ghcr.io/${{ github.repository }}:${{ matrix.arch }}-${{ needs.release.outputs.version }}
+          tags: ghcr.io/${{ github.repository }}:${{ matrix.arch }}-${{ needs.prepare-release.outputs.version }}
           cache-from: type=gha,scope=${{ matrix.arch }}
           cache-to: type=gha,mode=max,scope=${{ matrix.arch }}
           provenance: false
@@ -151,7 +155,7 @@ jobs:
 
   # Create multi-arch manifest
   create-manifest:
-    needs: [release, build-images]
+    needs: [prepare-release, build-images]
     runs-on: ubuntu-latest
     steps:
       - name: Log in to GitHub Container Registry
@@ -163,9 +167,9 @@ jobs:
 
       - name: Create and push multi-arch manifest
         run: |
-          VERSION="${{ needs.release.outputs.version }}"
-          SHA="${{ needs.release.outputs.sha_short }}"
-          TIMESTAMP="${{ needs.release.outputs.timestamp }}"
+          VERSION="${{ needs.prepare-release.outputs.version }}"
+          SHA="${{ needs.prepare-release.outputs.sha_short }}"
+          TIMESTAMP="${{ needs.prepare-release.outputs.timestamp }}"
           IMAGE="ghcr.io/${{ github.repository }}"
 
           # Create manifest for version tag
@@ -187,3 +191,25 @@ jobs:
           docker buildx imagetools create -t ${IMAGE}:${TIMESTAMP} \
             ${IMAGE}:amd64-${VERSION} \
             ${IMAGE}:arm64-${VERSION}
+
+  # Publish GitHub release only after Docker images are successfully built
+  publish-release:
+    needs: [prepare-release, create-manifest]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.prepare-release.outputs.tag_name }}
+
+      - name: Generate release notes
+        id: notes
+        run: |
+          ./scripts/generate-release-notes.sh ${{ needs.prepare-release.outputs.version }} > release-notes.md
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create ${{ needs.prepare-release.outputs.tag_name }} \
+            --title "${{ needs.prepare-release.outputs.tag_name }}" \
+            --notes-file release-notes.md
