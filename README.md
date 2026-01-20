@@ -410,6 +410,12 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed setup instructions, code gui
 
 We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for development setup and guidelines.
 
+**Before submitting a PR**, run these verification commands locally:
+- `npm run verify` - Quick verification (lint, typecheck, unit tests, build)
+- `npm run verify:all` - Full verification including E2E tests
+
+All PRs automatically run these checks via GitHub Actions. See [docs/PR_WORKFLOW.md](docs/PR_WORKFLOW.md) for details.
+
 ## Roadmap
 
 ℹ️ _Contributions to any of these items are very welcome! Items that require the most help will have the **[HELP NEEDED]** tag. If you want to contribute to an item that does not have a PR or Issue associated to it, please create it yoursef._

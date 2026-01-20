@@ -213,11 +213,19 @@ npm run test:e2e:ui
 npm run lint
 
 # Type check
-npx tsc --noEmit
+npm run typecheck
 
 # Build (catches many issues)
 npm run build
+
+# Quick verification (runs lint, typecheck, unit tests, and build)
+npm run verify
+
+# Full verification including E2E tests (same as CI/CD)
+npm run verify:all
 ```
+
+**Before submitting a PR**, it's recommended to run `npm run verify` (or `npm run verify:all` for complete testing) to catch issues early and save CI/CD time.
 
 ### Debugging
 
@@ -239,7 +247,7 @@ npm run build
 We use [Conventional Commits](https://www.conventionalcommits.org/) for automatic versioning and changelog generation.
 
 **Format:**
-```
+```text
 <type>[optional scope]: <description>
 
 [optional body]
@@ -305,8 +313,11 @@ git checkout -b fix/bug-description
 
 3. **Test your changes**:
 ```bash
-npm run test:run
-npm run build
+# Quick verification (recommended - runs lint, typecheck, unit tests, and build)
+npm run verify
+
+# Full verification including E2E tests (optional but recommended for larger changes)
+npm run verify:all
 ```
 
 4. **Commit with clear messages**:
@@ -328,8 +339,10 @@ Then open a pull request on GitHub.
 - Link to related issues
 - Add a clear description of what changed and why
 - Include screenshots for UI changes
-- Ensure tests pass and build succeeds
+- Ensure all checks pass (lint, typecheck, tests, build) - these run automatically via GitHub Actions
+- Run `npm run verify` locally before pushing to catch issues early
 - Update documentation if needed
+- See [docs/PR_WORKFLOW.md](docs/PR_WORKFLOW.md) for detailed PR verification process
 
 ## Internationalization (i18n)
 
@@ -472,7 +485,7 @@ try {
 
 ## Project Structure
 
-```
+```text
 /app                          # Next.js app directory (routes)
   /api                        # API endpoints
     /people                   # Person CRUD operations
