@@ -1,4 +1,3 @@
-```json
 {
   "common": {
     "save": "保存",
@@ -327,7 +326,6 @@
   "people": {
     "title": "人",
     "addPerson": "人物を追加",
-    "editPerson": "人物を編集",
     "deletePerson": "人物を削除",
     "viewPerson": "人物を表示",
     "fullName": "姓名",
@@ -366,8 +364,6 @@
     "relationshipNetwork": "関係ネットワーク",
     "graphHelp": "ノードをクリックしてナビゲート•ドラッグして再配置•スクロールしてズーム",
     "you": "あなた",
-    "year": "年",
-    "years": "年",
     "ago": "前",
     "remindOnce": "一度リマインド",
     "remindEvery": "{interval} {unit}ごとにリマインド",
