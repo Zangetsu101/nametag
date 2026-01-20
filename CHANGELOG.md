@@ -6,18 +6,39 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
-## [0.15.3](https://github.com/mattogodoy/nametag/compare/v0.15.2...v0.15.3) (2026-01-19)
+## [0.15.4](https://github.com/mattogodoy/nametag/compare/v0.15.3...v0.15.4) (2026-01-20)
 
 ### Bug Fixes
 
-* Fix for docker entrypoint with the new env variables for database. ([6a69f97](https://github.com/mattogodoy/nametag/commit/6a69f97170c38e1341d16f911ee114e0910fef45))
+* Allow GitHub Actions bot to create new releases ([3f98c37](https://github.com/mattogodoy/nametag/commit/3f98c371004a4e7c1199c463bed4c883e860b807))
+* Fix for cookie hijacking vulnerability ([e68445b](https://github.com/mattogodoy/nametag/commit/e68445b14185b028169c1269a340228dd20efe6c))
 
 ### Changelog
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.15.4](https://github.com/mattogodoy/nametag/compare/v0.15.3...v0.15.4)
+
+- Allow GitHub Actions bot to create new releases [`#45`](https://github.com/mattogodoy/nametag/pull/45)
+- Fix session cookie hijack vulnerability [`#44`](https://github.com/mattogodoy/nametag/pull/44)
+- 🔧 Chore: Prevent PRs from automatically bumping the release version [`#43`](https://github.com/mattogodoy/nametag/pull/43)
+- Added documentation about PR verification checks [`#42`](https://github.com/mattogodoy/nametag/pull/42)
+- 🐛 Fix: Fix for cookie hijacking vulnerability [`e68445b`](https://github.com/mattogodoy/nametag/commit/e68445b14185b028169c1269a340228dd20efe6c)
+- 🔧 Chore: Add pre-merge checks for PRs [`f68d061`](https://github.com/mattogodoy/nametag/commit/f68d0611f7992d131b65c8a2b47b664594b79dcc)
+- Disable E2E tests verification [`fc93dab`](https://github.com/mattogodoy/nametag/commit/fc93dabd00a4afb0ded59d2493087cff6b1e9070)
+- 🔧 Chore: Fix tests so they pass verifications [`64bea35`](https://github.com/mattogodoy/nametag/commit/64bea35e0a6859a52a9a1e5521799acc22e5a086)
+- Disable E2E tests verification [`e98d45b`](https://github.com/mattogodoy/nametag/commit/e98d45b4ac2ab9fa277e28d5bff8e6d998924266)
+- 🔧 Chore: Tightening the solution to the vulnerability [`6deddd1`](https://github.com/mattogodoy/nametag/commit/6deddd1890772021674af62fae4274fde8d6fd37)
+- Mock change to trigger the verification [`bf3f5ec`](https://github.com/mattogodoy/nametag/commit/bf3f5ec0a1f5e20c9de792b1e7a7cbeffe80de67)
+- 🐛 Fix: Allow GitHub Actions bot to create new releases [`3f98c37`](https://github.com/mattogodoy/nametag/commit/3f98c371004a4e7c1199c463bed4c883e860b807)
+- 🔧 Chore: Allow manual PR verification run [`3ad37f6`](https://github.com/mattogodoy/nametag/commit/3ad37f62880b9ba378c807adaf510e37d8f0374d)
+- Update roadmap [`e7f9f53`](https://github.com/mattogodoy/nametag/commit/e7f9f534ef52b73748c19b4f70daa747170b04c7)
+
 #### [v0.15.3](https://github.com/mattogodoy/nametag/compare/v0.15.2...v0.15.3)
 
+> 19 January 2026
+
+- 🔧 Chore: release v0.15.3 [`b11c69a`](https://github.com/mattogodoy/nametag/commit/b11c69aa810269d880f9a946f0667c9113050e72)
 - 🔧 Chore: Small fixes in documentation [`1762b96`](https://github.com/mattogodoy/nametag/commit/1762b961c49ab9cec170a3ad5ff40ee704af6db6)
 - 🐛 Fix: Fix for docker entrypoint with the new env variables for database. [`6a69f97`](https://github.com/mattogodoy/nametag/commit/6a69f97170c38e1341d16f911ee114e0910fef45)
 
