@@ -35,6 +35,10 @@ describe('Locale Utilities', () => {
       expect(isSupportedLocale('ja-JP')).toBe(true);
     });
 
+    it('should return true for "nb-NO"', () => {
+      expect(isSupportedLocale('nb-NO')).toBe(true);
+    });
+
     it('should return false for unsupported locales', () => {
       expect(isSupportedLocale('fr-FR')).toBe(false);
       expect(isSupportedLocale('de')).toBe(false);
@@ -46,6 +50,7 @@ describe('Locale Utilities', () => {
       expect(normalizeLocale('en')).toBe('en');
       expect(normalizeLocale('es-ES')).toBe('es-ES');
       expect(normalizeLocale('ja-JP')).toBe('ja-JP');
+      expect(normalizeLocale('nb-NO')).toBe('nb-NO');
     });
 
     it('should map "es" to "es-ES"', () => {
@@ -58,6 +63,14 @@ describe('Locale Utilities', () => {
 
     it('should map "ja" to "ja-JP"', () => {
       expect(normalizeLocale('ja')).toBe('ja-JP');
+    });
+
+    it('should map "nb" to "nb-NO"', () => {
+      expect(normalizeLocale('nb')).toBe('nb-NO');
+    });
+
+    it('should map "no" to "nb-NO"', () => {
+      expect(normalizeLocale('no')).toBe('nb-NO');
     });
 
     it('should default to "en" for unsupported locales', () => {
@@ -225,6 +238,39 @@ describe('Locale Utilities', () => {
       const locale = await detectBrowserLocale();
 
       expect(locale).toBe('ja-JP');
+    });
+
+    it('should detect Norwegian Bokmål from Accept-Language header', async () => {
+      const { headers } = await import('next/headers');
+      vi.mocked(headers).mockResolvedValue({
+        get: vi.fn().mockReturnValue('nb-NO,nb;q=0.9,en;q=0.8'),
+      } as any);
+
+      const locale = await detectBrowserLocale();
+
+      expect(locale).toBe('nb-NO');
+    });
+
+    it('should map "nb" to "nb-NO"', async () => {
+      const { headers } = await import('next/headers');
+      vi.mocked(headers).mockResolvedValue({
+        get: vi.fn().mockReturnValue('nb,en;q=0.9'),
+      } as any);
+
+      const locale = await detectBrowserLocale();
+
+      expect(locale).toBe('nb-NO');
+    });
+
+    it('should map "no" to "nb-NO"', async () => {
+      const { headers } = await import('next/headers');
+      vi.mocked(headers).mockResolvedValue({
+        get: vi.fn().mockReturnValue('no,no-NO;q=0.9,en;q=0.8'),
+      } as any);
+
+      const locale = await detectBrowserLocale();
+
+      expect(locale).toBe('nb-NO');
     });
 
     it('should default to "en" for unsupported languages', async () => {

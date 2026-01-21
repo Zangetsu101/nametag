@@ -103,7 +103,8 @@
         "description": "Velg språket ditt",
         "en": "Engelsk",
         "esES": "Spansk (Spania)",
-        "jaJP": "日本語"
+        "jaJP": "日本語",
+        "nbNO": "Norsk bokmål"
       }
     },
     "security": {
