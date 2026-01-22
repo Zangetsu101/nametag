@@ -6,19 +6,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
-## [0.16.2](https://github.com/mattogodoy/nametag/compare/v0.16.1...v0.16.2) (2026-01-22)
+## [0.16.3](https://github.com/mattogodoy/nametag/compare/v0.16.2...v0.16.3) (2026-01-22)
 
 ### Bug Fixes
 
-* Create release for Norwegian translations (PR [#49](https://github.com/mattogodoy/nametag/issues/49)) ([38d39e1](https://github.com/mattogodoy/nametag/commit/38d39e1eac710f0aa8cea54ccfa164a761c473de))
+* Create release for German translations (PR [#52](https://github.com/mattogodoy/nametag/issues/52)) ([dc2ed7f](https://github.com/mattogodoy/nametag/commit/dc2ed7f3cdba20cbd98a4bb2793b644c6ae4afe2))
 
 ### Changelog
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.16.3](https://github.com/mattogodoy/nametag/compare/v0.16.2...v0.16.3)
+
+- Added German Translation [`#52`](https://github.com/mattogodoy/nametag/pull/52)
+- 🐛 Fix: Create release for German translations (PR #52) [`dc2ed7f`](https://github.com/mattogodoy/nametag/commit/dc2ed7f3cdba20cbd98a4bb2793b644c6ae4afe2)
+
 #### [v0.16.2](https://github.com/mattogodoy/nametag/compare/v0.16.1...v0.16.2)
 
+> 22 January 2026
+
 - Added Norwegian translation [`#49`](https://github.com/mattogodoy/nametag/pull/49)
+- 🔧 Chore: release v0.16.2 [`6b43bdc`](https://github.com/mattogodoy/nametag/commit/6b43bdc947e6e542a59a67a4e37db448a981a720)
 - 🐛 Fix: Create release for Norwegian translations (PR #49) [`38d39e1`](https://github.com/mattogodoy/nametag/commit/38d39e1eac710f0aa8cea54ccfa164a761c473de)
 - Added Norwegian Bokmål language [`fa459d3`](https://github.com/mattogodoy/nametag/commit/fa459d31c337804dc365bdff5f1beb585f43049d)
 - added norwegian to menu list, supported locale allowlist, updated API validation message. [`8f88e9d`](https://github.com/mattogodoy/nametag/commit/8f88e9d5fb3aa9ca8eefaa10857a720568547d7b)
