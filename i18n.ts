@@ -49,6 +49,10 @@ export default getRequestConfig(async () => {
             locale = 'ja-JP';
             break;
           }
+          if (languageCode === 'nb' || languageCode === 'no') {
+            locale = 'nb-NO';
+            break;
+          }
         }
       }
     }
