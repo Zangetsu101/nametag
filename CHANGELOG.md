@@ -6,21 +6,33 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
-## [0.16.1](https://github.com/mattogodoy/nametag/compare/v0.16.0...v0.16.1) (2026-01-21)
+## [0.16.2](https://github.com/mattogodoy/nametag/compare/v0.16.1...v0.16.2) (2026-01-22)
 
 ### Bug Fixes
 
-* Add necessary changes for new language ([c12ee99](https://github.com/mattogodoy/nametag/commit/c12ee9993142a30e49bec6abe014f48fe862af1a))
+* Create release for Norwegian translations (PR [#49](https://github.com/mattogodoy/nametag/issues/49)) ([38d39e1](https://github.com/mattogodoy/nametag/commit/38d39e1eac710f0aa8cea54ccfa164a761c473de))
 
 ### Changelog
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.16.2](https://github.com/mattogodoy/nametag/compare/v0.16.1...v0.16.2)
+
+- Added Norwegian translation [`#49`](https://github.com/mattogodoy/nametag/pull/49)
+- 🐛 Fix: Create release for Norwegian translations (PR #49) [`38d39e1`](https://github.com/mattogodoy/nametag/commit/38d39e1eac710f0aa8cea54ccfa164a761c473de)
+- Added Norwegian Bokmål language [`fa459d3`](https://github.com/mattogodoy/nametag/commit/fa459d31c337804dc365bdff5f1beb585f43049d)
+- added norwegian to menu list, supported locale allowlist, updated API validation message. [`8f88e9d`](https://github.com/mattogodoy/nametag/commit/8f88e9d5fb3aa9ca8eefaa10857a720568547d7b)
+- i18n.ts [`2c16e2c`](https://github.com/mattogodoy/nametag/commit/2c16e2c9982e2c7a25253a9b9090046c32045142)
+- Update Roadmap [`bdbacea`](https://github.com/mattogodoy/nametag/commit/bdbacea17bd968db2e63152e77dc41a827eeadc1)
+
 #### [v0.16.1](https://github.com/mattogodoy/nametag/compare/v0.16.0...v0.16.1)
+
+> 21 January 2026
 
 - 🐛 Fix: Add docs and a few fixes for new language [`#47`](https://github.com/mattogodoy/nametag/pull/47)
 - 🔧 Chore: Added instructions for adding a new language in the CONTRIBUTING file [`63d9253`](https://github.com/mattogodoy/nametag/commit/63d92538377ae4ceaab48cce7750798a48399fcf)
 - 🐛 Fix: Add necessary changes for new language [`c12ee99`](https://github.com/mattogodoy/nametag/commit/c12ee9993142a30e49bec6abe014f48fe862af1a)
+- 🔧 Chore: release v0.16.1 [`e4e2890`](https://github.com/mattogodoy/nametag/commit/e4e2890ca2b5fd1d8ca061aef0c9739c863351c6)
 
 #### [v0.16.0](https://github.com/mattogodoy/nametag/compare/v0.15.4...v0.16.0)
 
