@@ -100,11 +100,12 @@ interface RelationshipWithInverse extends Relationship {
 }
 
 /**
- * Converts a relationship into a graph edge for the inverse relationship.
- * E.g., if the relationship is "parent", this creates the "child" edge.
- * Returns undefined if there is no inverse relationship defined.
+ * Converts the inverse relationship into a graph edge
+ * E.g., if the relationship is "parent", this creates
+ * the "child" edge.
+ * Returns undefined if there is no inverse relationship.
  */
-export function relationshipToInverseGraphEdge(
+export function inverseRelationshipToGraphEdge(
   relationship: RelationshipWithInverse,
 ): GraphEdge | undefined {
   if (!relationship.relationshipType?.inverse) {

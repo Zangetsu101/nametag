@@ -6,7 +6,7 @@ import {
   personToGraphNode,
   relationshipsWithUserToGraphEdges,
   relationshipToGraphEdge,
-  relationshipToInverseGraphEdge,
+  inverseRelationshipToGraphEdge,
 } from '@/lib/graph-utils';
 
 export const GET = withAuth(async (_request, session, context) => {
@@ -157,8 +157,9 @@ export const GET = withAuth(async (_request, session, context) => {
       .filter((e) => e !== undefined)
       .forEach((e) => dedupedEdges.add(e));
 
+    // include the inverse relationships too
     person.relationshipsFrom
-      .map(relationshipToInverseGraphEdge)
+      .map(inverseRelationshipToGraphEdge)
       .filter((e) => e !== undefined)
       .forEach((e) => dedupedEdges.add(e));
 
@@ -176,9 +177,10 @@ export const GET = withAuth(async (_request, session, context) => {
         .filter((e) => e !== undefined)
         .forEach((e) => dedupedEdges.add(e));
 
+      // include the inverse relationships too
       rel.relatedPerson.relationshipsFrom
         .filter((r) => nodeIds.has(r.relatedPersonId))
-        .map(relationshipToInverseGraphEdge)
+        .map(inverseRelationshipToGraphEdge)
         .filter((e) => e !== undefined)
         .forEach((e) => dedupedEdges.add(e));
     });

@@ -6,7 +6,7 @@ import {
   personToGraphNode,
   relationshipsWithUserToGraphEdges,
   relationshipToGraphEdge,
-  relationshipToInverseGraphEdge,
+  inverseRelationshipToGraphEdge,
 } from '@/lib/graph-utils';
 
 type DashboardGraphPerson = {
@@ -176,9 +176,10 @@ export const GET = withAuth(async (request, session) => {
         .filter((e) => e !== undefined)
         .forEach((e) => dedupedEdges.add(e));
 
+      // include the inverse relationships too
       person.relationshipsFrom
         .filter((r) => nodeIds.has(r.relatedPersonId))
-        .map(relationshipToInverseGraphEdge)
+        .map(inverseRelationshipToGraphEdge)
         .filter((e) => e !== undefined)
         .forEach((e) => dedupedEdges.add(e));
     });
