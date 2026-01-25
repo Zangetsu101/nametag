@@ -207,7 +207,7 @@ export default async function PersonDetailsPage({
     (p) => !relatedPersonIds.has(p.id)
   );
 
-  // As the relationshipTouser includes the relationship as user -> person,
+  // As the relationshipToUser includes the relationship as user -> person,
   // we are getting the inverse relationship which is person -> user
   const relationshipToUser = person.relationshipToUser?.inverse;
 

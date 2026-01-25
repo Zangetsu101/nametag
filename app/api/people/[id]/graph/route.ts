@@ -2,7 +2,7 @@ import { prisma } from '@/lib/prisma';
 import { apiResponse, handleApiError, withAuth } from '@/lib/api-utils';
 import type { GraphNode, GraphEdge } from '@/lib/graph-utils';
 import {
-    getUserNode,
+    userToGraphNode,
   personToGraphNode,
   relationshipsWithUserToGraphEdges,
   relationshipToGraphEdge,
@@ -131,7 +131,7 @@ export const GET = withAuth(async (_request, session, context) => {
 
     // Add user as a node
     const userId = `user-${session.user.id}`;
-    nodes.push(getUserNode(userId));
+    nodes.push(userToGraphNode(userId));
     nodeIds.add(userId);
 
     // if person has direct relationship to user, add them
@@ -144,7 +144,7 @@ export const GET = withAuth(async (_request, session, context) => {
         nodeIds.add(rel.relatedPersonId);
       }
 
-      // If the related person direct relationship to the user, add them
+      // If the related person has direct relationship to the user, add them
       edges.push(
         ...relationshipsWithUserToGraphEdges(rel.relatedPerson, userId),
       );

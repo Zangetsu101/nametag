@@ -24,9 +24,7 @@ type RelationshipToUser = Prisma.RelationshipTypeGetPayload<{
   select: { label: true; color: true };
 }>;
 
-type InverseRelationship = Prisma.RelationshipTypeGetPayload<{
-  select: { label: true; color: true };
-}>;
+type InverseRelationship = RelationshipToUser;
 
 interface PersonWithRelationshipToUser extends PersonId {
   relationshipToUser:
@@ -36,6 +34,9 @@ interface PersonWithRelationshipToUser extends PersonId {
     | null;
 }
 
+/**
+ * Converts a person's relationship to the user into graph edges.
+ */
 export function relationshipsWithUserToGraphEdges(
   person: PersonWithRelationshipToUser,
   userId: string,
@@ -72,6 +73,10 @@ type Relationship = Prisma.RelationshipGetPayload<{
   };
 }>;
 
+/**
+ * Converts a relationship into a graph edge.
+ * Returns undefined if the relationship type is missing.
+ */
 export function relationshipToGraphEdge(
   relationship: Relationship,
 ): GraphEdge | undefined {
@@ -93,6 +98,12 @@ interface RelationshipWithInverse extends Relationship {
       })
     | null;
 }
+
+/**
+ * Converts a relationship into a graph edge for the inverse relationship.
+ * E.g., if the relationship is "parent", this creates the "child" edge.
+ * Returns undefined if there is no inverse relationship defined.
+ */
 export function relationshipToInverseGraphEdge(
   relationship: RelationshipWithInverse,
 ): GraphEdge | undefined {
@@ -121,7 +132,7 @@ export function personToGraphNode(person: Person, isCenter = false): GraphNode {
   };
 }
 
-export function getUserNode(id: string, isCenter = false): GraphNode {
+export function userToGraphNode(id: string, isCenter = false): GraphNode {
   return {
     id,
     label: 'You',
