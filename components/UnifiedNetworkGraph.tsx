@@ -151,6 +151,7 @@ export default function UnifiedNetworkGraph({
         .append('path')
         .attr('d', 'M0,-5L10,0L0,5')
         .attr('fill', color)
+        .attr('fill-opacity', 0.8)
     });
 
     // Calculate cluster positions for group clustering
