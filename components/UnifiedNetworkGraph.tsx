@@ -309,7 +309,7 @@ export default function UnifiedNetworkGraph({
           })
           .attr('marker-end', (edge) => {
             const sourceId = getNodeId(edge.source);
-            return sourceId === d.id ? `url(#arrow-${(edge.color || '#999').replace('#', '')}`: null;
+            return sourceId === d.id ? `url(#arrow-${(edge.color || '#999').replace('#', '')})`: null;
           });
 
         // Show labels for connected edges
